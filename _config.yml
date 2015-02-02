@@ -1,0 +1,9 @@
+name: "parallelcoordinates.de"
+description: "Visual Multidimensional Geometry"
+
+url: "http://localhost:4000"
+
+paginate: 10
+
+permalink: pretty
+highlighter: pygments
