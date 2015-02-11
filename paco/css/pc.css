@@ -1,0 +1,34 @@
+.container {
+	text-align: left;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+
+.section {
+	width: 100%;
+	height: 100%;
+}
+
+
+#table_section {
+	margin-bottom:1%;
+}
+
+#pc_section {
+	margin-bottom:1%;
+}
+
+#ui_section {
+	position: absolute;
+	width: 20%;
+	height: 500px;
+	display: none;
+}
+
+.controls {
+	margin-left: 25%;
+	width:75%;
+}
+

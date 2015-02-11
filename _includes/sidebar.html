@@ -1,0 +1,11 @@
+<h3>About</h3>
+
+<p>
+This page is dedicated to parallel coordinates, a visualization technique for multidimensional geometry.
+</p>
+
+<ul>
+  {% for post in site.posts limit: 5 %}
+    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+  {% endfor %}
+</ul>
