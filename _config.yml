@@ -1,8 +1,10 @@
 name: "parallelcoordinates.de"
 description: "Visual Multidimensional Geometry"
 
-#url: "http://localhost:4000"
-url: "http://julianheinrich.github.io/parallelcoordinates.de"
+baseurl: "/parallelcoordinates.de"
+url: "http://localhost:4000"
+#url: "http://julianheinrich.github.io/parallelcoordinates.de"
+#url: "http://parallelcoordinates.de"
 
 paginate: 10
 

@@ -1,10 +1,8 @@
 d3.parcoords = function(config) {
   var __ = {
     data: [],
-    highlighted: [],
     dimensions: [],
     dimensionTitles: {},
-    dimensionTitleRotation: 0,
     types: {},
     brushed: false,
     mode: "default",
@@ -181,25 +179,8 @@ pc.autoscale = function() {
         .range([h()+1, 1]);
     },
     "string": function(k) {
-      var counts = {},
-          domain = [];
-
-      // Let's get the count for each value so that we can sort the domain based
-      // on the number of items for each value.
-      __.data.map(function(p) {
-        if (counts[p[k]] === undefined) {
-          counts[p[k]] = 1;
-        } else {
-          counts[p[k]] = counts[p[k]] + 1;
-        }
-      });
-
-      domain = Object.getOwnPropertyNames(counts).sort(function(a, b) {
-        return counts[a] - counts[b];
-      });
-
       return d3.scale.ordinal()
-        .domain(domain)
+        .domain(__.data.map(function(p) { return p[k]; }))
         .rangePoints([h()+1, 1]);
     }
   };
@@ -331,28 +312,21 @@ pc.render = function() {
 pc.render['default'] = function() {
   pc.clear('foreground');
   if (__.brushed) {
-    __.brushed.forEach(path_foreground);
-    __.highlighted.forEach(path_highlight);
+	__.brushed.forEach(path_foreground);
   } else {
-    __.data.forEach(path_foreground);
-    __.highlighted.forEach(path_highlight);
+	__.data.forEach(path_foreground);
   }
 };
 
 var rqueue = d3.renderQueue(path_foreground)
   .rate(50)
-  .clear(function() {
-    pc.clear('foreground');
-    pc.clear('highlight');
-  });
+  .clear(function() { pc.clear('foreground'); });
 
 pc.render.queue = function() {
   if (__.brushed) {
     rqueue(__.brushed);
-    __.highlighted.forEach(path_highlight);
   } else {
     rqueue(__.data);
-    __.highlighted.forEach(path_highlight);
   }
 };
 //renderGL.js
@@ -1255,7 +1229,7 @@ function compute_control_points(centroids) {
 //draw little dots on the axis line where data intersects
 pc.axisDots = function() {
 	var ctx = pc.ctx.marks;
-	ctx.globalAlpha = d3.min([ 1 / Math.pow(__.data.length, 1 / 2), 1 ]);
+	ctx.globalAlpha = d3.min([ 1 / Math.pow(data.length, 1 / 2), 1 ]);
 	__.data.forEach(function(d) {
 		__.dimensions.map(function(p, i) {
 			ctx.fillRect(position(p) - 0.75, yscale[p](d[p]) - 0.75, 1.5, 1.5);
@@ -1328,31 +1302,6 @@ pc.clear = function(layer) {
   ctx[layer].clearRect(0,0,w()+2,h()+2);
   return this;
 };
-function flipAxisAndUpdatePCP(dimension) {
-  var g = pc.svg.selectAll(".dimension");
-
-  pc.flip(dimension);
-
-  d3.select(this.parentElement)
-    .transition()
-      .duration(1100)
-      .call(axis.scale(yscale[dimension]));
-
-  pc.render();
-  if (flags.shadows) paths(__.data, ctx.shadows);
-}
-
-function rotateLabels() {
-  var delta = d3.event.deltaY;
-  delta = delta < 0 ? -5 : delta;
-  delta = delta > 0 ? 5 : delta;
-
-  __.dimensionTitleRotation += delta;
-  pc.svg.selectAll("text.label")
-    .attr("transform", "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")");
-  d3.event.preventDefault();
-}
-
 pc.createAxes = function() {
   if (g) pc.removeAxes();
 
@@ -1372,15 +1321,13 @@ pc.createAxes = function() {
       .attr({
         "text-anchor": "middle",
         "y": 0,
-        "transform": "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")",
+        "transform": "translate(0,-12)",
         "x": 0,
         "class": "label"
       })
       .text(function(d) {
         return d in __.dimensionTitles ? __.dimensionTitles[d] : d;  // dimension display names
-      })
-      .on("dblclick", flipAxisAndUpdatePCP)
-      .on("wheel", rotateLabels);
+      });
 
   flags.axes= true;
   return this;
@@ -1392,9 +1339,9 @@ pc.removeAxes = function() {
 };
 
 pc.updateAxes = function() {
-  var g_data = pc.svg.selectAll(".dimension").data(__.dimensions);
+  var g_data = pc.svg.selectAll(".dimension")
+      .data(__.dimensions, function(d) { return d; });
 
-  // Enter
   g_data.enter().append("svg:g")
       .attr("class", "dimension")
       .attr("transform", function(p) { return "translate(" + position(p) + ")"; })
@@ -1407,49 +1354,26 @@ pc.updateAxes = function() {
       .attr({
         "text-anchor": "middle",
         "y": 0,
-        "transform": "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")",
+        "transform": "translate(0,-12)",
         "x": 0,
         "class": "label"
       })
-      .text(String)
-      .on("dblclick", flipAxisAndUpdatePCP)
-      .on("wheel", rotateLabels);
+      .text(String);
 
-  // Update
-  g_data.attr("opacity", 0);
-  g_data.select(".axis")
-    .transition()
-      .duration(1100)
-      .each(function(d) {
-        d3.select(this).call(axis.scale(yscale[d]));
-      });
-  g_data.select(".label")
-    .transition()
-      .duration(1100)
-      .text(String)
-      .attr("transform", "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")");
-
-  // Exit
   g_data.exit().remove();
 
   g = pc.svg.selectAll(".dimension");
+
   g.transition().duration(1100)
     .attr("transform", function(p) { return "translate(" + position(p) + ")"; })
     .style("opacity", 1);
 
-  pc.svg.selectAll(".axis")
-    .transition()
-      .duration(1100)
-      .each(function(d) { d3.select(this).call(axis.scale(yscale[d])); });
+  pc.svg.selectAll(".axis").transition().duration(1100)
+  	.each(function(d) { d3.select(this).call(axis.scale(yscale[d])); });
 
   if (flags.shadows) paths(__.data, ctx.shadows);
   if (flags.brushable) pc.brushable();
   if (flags.reorderable) pc.reorderable();
-  if (pc.brushMode() !== "None") {
-    var mode = pc.brushMode();
-    pc.brushMode("None");
-    pc.brushMode(mode);
-  }
   return this;
 };
 
@@ -1457,10 +1381,16 @@ pc.updateAxes = function() {
 pc.reorderable = function() {
   if (!g) pc.createAxes();
 
+  // Keep track of the order of the axes to verify if the order has actually
+  // changed after a drag ends. Changed order might have consequence (e.g.
+  // strums that need to be reset).
+  var dimsAtDragstart;
+
   g.style("cursor", "move")
     .call(d3.behavior.drag()
       .on("dragstart", function(d) {
         dragging[d] = this.__origin__ = xscale(d);
+        dimsAtDragstart = __.dimensions.slice();
       })
       .on("drag", function(d) {
         dragging[d] = Math.min(w(), Math.max(0, this.__origin__ += d3.event.dx));
@@ -1471,40 +1401,18 @@ pc.reorderable = function() {
       })
       .on("dragend", function(d) {
         // Let's see if the order has changed and send out an event if so.
-        var i = 0,
-            j = __.dimensions.indexOf(d),
-            elem = this,
-            parent = this.parentElement;
+        var orderChanged = dimsAtDragstart.some(function(d, i) {
+          return d !== __.dimensions[i];
+        });
 
-        while((elem = elem.previousElementSibling) != null) ++i;
-        if (i !== j) {
+        if (orderChanged) {
           events.axesreorder.call(pc, __.dimensions);
-          // We now also want to reorder the actual dom elements that represent
-          // the axes. That is, the g.dimension elements. If we don't do this,
-          // we get a weird and confusing transition when updateAxes is called.
-          // This is due to the fact that, initially the nth g.dimension element
-          // represents the nth axis. However, after a manual reordering,
-          // without reordering the dom elements, the nth dom elements no longer
-          // necessarily represents the nth axis.
-          //
-          // i is the original index of the dom element
-          // j is the new index of the dom element
-          if (i > j) { // Element moved left
-            parent.insertBefore(this, parent.children[j - 1]);
-          } else {     // Element moved right
-            if ((j + 1) < parent.children.length) {
-              parent.insertBefore(this, parent.children[j + 1]);
-            } else {
-              parent.appendChild(this);
-            }
-          }
         }
 
         delete this.__origin__;
         delete dragging[d];
         d3.select(this).transition().attr("transform", "translate(" + xscale(d) + ")");
         pc.render();
-        if (flags.shadows) paths(__.data, ctx.shadows);
       }));
   flags.reorderable = true;
   return this;
@@ -1727,15 +1635,14 @@ pc.brushMode = function(mode) {
 
 (function() {
   var strums = {},
-      strumRect;
+      strumCanvas;
 
-  function drawStrum(strum, activePoint) {
+  function drawStrum(strum) {
     var svg = pc.selection.select("svg").select("g#strums"),
-        id = strum.dims.i,
-        points = [strum.p1, strum.p2],
-        line = svg.selectAll("line#strum-" + id).data([strum]),
-        circles = svg.selectAll("circle#strum-" + id).data(points),
-        drag = d3.behavior.drag();
+        id = strum.dims.i;
+
+    var line = svg.selectAll("line#strum-" + id)
+      .data([strum]);
 
     line.enter()
       .append("line")
@@ -1749,36 +1656,6 @@ pc.brushMode = function(mode) {
       .attr("y2", function(d) { return d.p2[1]; })
       .attr("stroke", "black")
       .attr("stroke-width", 2);
-
-    drag
-      .on("drag", function(d, i) { 
-        var ev = d3.event;
-        i = i + 1;
-        strum["p" + i][0] = Math.min(Math.max(strum.minX + 1, ev.x), strum.maxX);
-        strum["p" + i][1] = Math.min(Math.max(strum.minY, ev.y), strum.maxY);
-        drawStrum(strum, i - 1);
-      })
-      .on("dragend", onDragEnd());
-
-    circles.enter()
-      .append("circle")
-      .attr("id", "strum-" + id)
-      .attr("class", "strum");
-
-    circles
-      .attr("cx", function(d) { return d[0]; })
-      .attr("cy", function(d) { return d[1]; })
-      .attr("r", 5)
-      .style("opacity", function(d, i) {
-        return (activePoint !== undefined && i === activePoint) ? 0.8 : 0;
-      })
-      .on("mouseover", function() {
-        d3.select(this).style("opacity", 0.8);
-      })
-      .on("mouseout", function() {
-        d3.select(this).style("opacity", 0);
-      })
-      .call(drag);
   }
 
   function dimensionsForPoint(p) {
@@ -1815,15 +1692,13 @@ pc.brushMode = function(mode) {
     // logically only happen between two axes, so no movement outside these axes
     // should be allowed.
     return function() {
-      var p = d3.mouse(strumRect[0][0]),
+      var p = d3.mouse(strumCanvas),
           dims = dimensionsForPoint(p),
           strum = {
             p1: p,
             dims: dims,
             minX: xscale(dims.left),
-            maxX: xscale(dims.right),
-            minY: 0,
-            maxY: h()
+            maxX: xscale(dims.right)
           };
 
       strums[dims.i] = strum;
@@ -1831,7 +1706,7 @@ pc.brushMode = function(mode) {
 
       // Make sure that the point is within the bounds
       strum.p1[0] = Math.min(Math.max(strum.minX, p[0]), strum.maxX);
-      strum.p1[1] = p[1] - __.margin.top;
+      strum.p1[1] = p[1];
       strum.p2 = strum.p1.slice();
     };
   }
@@ -1843,8 +1718,8 @@ pc.brushMode = function(mode) {
 
       // Make sure that the point is within the bounds
       strum.p2[0] = Math.min(Math.max(strum.minX + 1, ev.x), strum.maxX);
-      strum.p2[1] = Math.min(Math.max(strum.minY, ev.y - __.margin.top), strum.maxY);
-      drawStrum(strum, 1);
+      strum.p2[1] = ev.y - __.margin.top;
+      drawStrum(strum);
     };
   }
 
@@ -1912,7 +1787,6 @@ pc.brushMode = function(mode) {
     delete strums[strums.active];
     strums.active = undefined;
     svg.selectAll("line#strum-" + strum.dims.i).remove();
-    svg.selectAll("circle#strum-" + strum.dims.i).remove();
   }
 
   function onDragEnd() {
@@ -1928,9 +1802,9 @@ pc.brushMode = function(mode) {
 
       brushed = selected(strums);
       strums.active = undefined;
-      __.brushed = brushed;
-      pc.render();
+      __.brushed = brushed.length === __.data.length ? false : brushed;
       events.brushend.call(pc, __.brushed);
+      pc.render();
     };
   }
 
@@ -1950,6 +1824,14 @@ pc.brushMode = function(mode) {
 
   function install() {
     var drag = d3.behavior.drag();
+
+    // Add a canvas to catch the mouse events, used to set the strums.
+    strumCanvas = pc.selection.insert("canvas", "svg")
+      .attr("class", "strums")
+      .style("margin-top", __.margin.top + "px")
+      .style("margin-left", __.margin.left + "px")
+      .attr("width", w()+2)
+      .attr("height", h()+2)[0][0];
 
     // Map of current strums. Strums are stored per segment of the PC. A segment,
     // being the area between two axes. The left most area is indexed at 0.
@@ -2013,25 +1895,24 @@ pc.brushMode = function(mode) {
     // NOTE: The styling needs to be done here and not in the css. This is because
     //       for 1D brushing, the canvas layers should not listen to
     //       pointer-events.
-    strumRect = pc.selection.select("svg").insert("rect", "g#strums")
-      .attr("id", "strum-events")
-      .attr("x", __.margin.left)
-      .attr("y", __.margin.top)
-      .attr("width", w())
-      .attr("height", h() + 2)
-      .style("opacity", 0)
+    // FIXME: Like brushable, strumming can only be enabled and not disabled at
+    //        this point. So, if we want to be able to switch between the two (or
+    //        possibly more in the future) methods.
+    d3.select(strumCanvas)
+      .style("pointer-events", "auto")
+      .style("z-index", 1000)
       .call(drag);
   }
 
   brush.modes["2D-strums"] = {
     install: install,
     uninstall: function() {
+      pc.selection.select("canvas.strums").remove();
       pc.selection.select("svg").select("g#strums").remove();
-      pc.selection.select("svg").select("rect#strum-events").remove();
       pc.on("axesreorder.strums", undefined);
       delete pc.brushReset;
 
-      strumRect = undefined;
+      strumCanvas = undefined;
     },
     selected: selected
   };
@@ -2078,21 +1959,15 @@ pc.resize = function() {
 
 // highlight an array of data
 pc.highlight = function(data) {
-  if (arguments.length === 0) {
-    return __.highlighted;
-  }
-
-  __.highlighted = data;
   pc.clear("highlight");
   d3.select(canvas.foreground).classed("faded", true);
   data.forEach(path_highlight);
-  events.highlight.call(this, data);
+  events.highlight.call(this,data);
   return this;
 };
 
 // clear highlighting
-pc.unhighlight = function() {
-  __.highlighted = [];
+pc.unhighlight = function(data) {
   pc.clear("highlight");
   d3.select(canvas.foreground).classed("faded", false);
   return this;
@@ -2111,9 +1986,9 @@ function position(d) {
   var v = dragging[d];
   return v == null ? xscale(d) : v;
 }
-pc.version = "0.5.0";
-  // this descriptive text should live with other introspective methods
   pc.toString = function() { return "Parallel Coordinates: " + __.dimensions.length + " dimensions (" + d3.keys(__.data[0]).length + " total) , " + __.data.length + " rows"; };
+  
+  pc.version = "0.4.0";
 
   return pc;
 };
