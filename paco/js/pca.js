@@ -251,10 +251,10 @@ var PCA = function(){
                 {
                     if (Math.abs(e[l]) <= prec){
                         test_convergence= true
-                        break 
+                        break; 
                     }
                     if (Math.abs(q[l-1]) <= prec)
-                        break 
+                        break; 
                 }
                 if (!test_convergence){
                     // cancellation of e[l] if l>0
@@ -266,7 +266,7 @@ var PCA = function(){
                         f= s*e[i]
                         e[i]= c*e[i]
                         if (Math.abs(f) <= prec)
-                            break
+                            break;
                         g= q[i]
                         h= pythag(f,g)
                         q[i]= h
