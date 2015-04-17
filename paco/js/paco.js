@@ -6,14 +6,14 @@ var dataView = {};
 var pc;
 var fileAPI = true;
 var gui;
+//var globalData;
+var globalDimensions;
+var colorMap = {};
 
 var currentFilter = {
 		searchString: "",
 		brushed: false
 };
-
-var globalData;
-var globalDimensions;
 
 function without(arr, item) {
 	return arr.filter(function(elem) { return item.indexOf(elem) === -1; })
@@ -23,7 +23,6 @@ function log10(x) {
 	return Math.log(x) / Math.LN10;
 }
 
-var colorMap = {};
 var color = function(d) { return colorMap[d.id]; };
 var createColormap = function(data, color) {
 	color = (typeof color === 'undefined') ? "#000000" : color;
@@ -41,25 +40,9 @@ $(document).ready( function() {
 	}
 
 	pc = new d3.parcoords({webgl:false})("#pc_section")
-	.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+		.margin({ top: 20, left: 50, bottom: 12, right: 0 });
 	d3.csv('data/mtcars.csv', function(d) {
-		globalData = d;
-		createIDs(d);
-		createColormap(d);
-		pc
-		.data(d)
-		.color("black")
-		//.alpha(1.0)
-		//.variance(0.001)
-		.hideAxis(["id"])
-		.render()
-		.createAxes()
-		.reorderable()
-		.brushMode("1D-axes");
-
-		globalDimensions = pc.dimensions();
-		//setupVisibility();
-
+		loadData(d);
 	});
 
 	// setup file upload
@@ -96,22 +79,40 @@ $(document).ready( function() {
 	});
 
 	var layout = function() {
-		pc.width($("#pc_section").width())
-		.height($("#pc_section").height())
-		//.data(globalData)
-		// .color(color)
-		//.hideAxis(["id"])
+		pc
+//		.width($("#pc_section").width())
+//		.height($("#pc_section").height())
 		.render();
-		//.createAxes()
-		//.reorderable()
-		//.brushMode("1D-axes");
+//		pc.resize();
 	};
 
-	layout();
 	$(window).resize(layout);
 
 });
 
+function loadData(data) {
+//	globalData = data;
+	createIDs(data);
+	createColormap(data);
+	pc
+		.data(data)
+		.color(color)
+		.detectDimensions()
+		.autoscale()
+		.hideAxis(["id"])
+		.render()
+		.createAxes()
+		.reorderable();
+
+	// setupGrid(data);
+	
+	// remove previous dimensions before assigning
+	// new ones
+	
+	globalDimensions = pc.dimensions();
+
+	setupVisibility();
+}
 
 function loadFiles(files) {
 	if (files.length > 0) {
@@ -120,38 +121,13 @@ function loadFiles(files) {
 		reader.onload = (function(file) { return function(e) {
 			var data = (reader.result.indexOf("\t") < 0 ? d3.csv : d3.tsv).parse(reader.result);
 			if (data.length > 0) {
-				globalData = data;
-				createIDs(data);
-				createColormap(data);
-				pc.clear("foreground")
-				.data(data)
-				.color(color)
-				.detectDimensions()
-				.autoscale()
-				.hideAxis(["id"])
-				.render()
-				.reorderable()
-				.createAxes();
-
-				// setupGrid(data);
-				pc.filename = file.name;
-				gui.add(pc, 'filename');
-
-				// remove previous dimensions before assigning
-				// new ones
-				globalDimensions.forEach(function(dim) {
-					gui.remove(pc, dim);
-				});
-
-				globalDimensions = pc.dimensions();
-
-				setupVisibility();
-
+				loadData(data);
 			} else {
 				alert("no data or not in csv format!");
 			}
 		};})(file);
 		reader.readAsText(file);
+		$("#status_filename").text(file.name);
 	}
 }
 
@@ -159,7 +135,7 @@ setupVisibility = function() {
 
 	globalDimensions.forEach(function(dim) {
 		pc[dim] = true;
-		gui.add(pc, dim).onChange(toggleVisibility);
+//		gui.add(pc, dim).onChange(toggleVisibility);
 	});
 	// pc["id"] = false;
 }
