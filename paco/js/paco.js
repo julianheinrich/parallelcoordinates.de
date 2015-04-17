@@ -41,21 +41,21 @@ $(document).ready( function() {
 	}
 
 	pc = new d3.parcoords({webgl:false})("#pc_section")
-		.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+	.margin({ top: 20, left: 50, bottom: 12, right: 0 });
 	d3.csv('data/mtcars.csv', function(d) {
 		globalData = d;
 		createIDs(d);
 		createColormap(d);
 		pc
-			.data(d)
-			.color("black")
-			//.alpha(1.0)
-			//.variance(0.001)
-			.hideAxis(["id"])
-			.render()
-			.createAxes()
-			.reorderable()
-			.brushMode("1D-axes");
+		.data(d)
+		.color("black")
+		//.alpha(1.0)
+		//.variance(0.001)
+		.hideAxis(["id"])
+		.render()
+		.createAxes()
+		.reorderable()
+		.brushMode("1D-axes");
 
 		globalDimensions = pc.dimensions();
 		//setupVisibility();
@@ -97,14 +97,14 @@ $(document).ready( function() {
 
 	var layout = function() {
 		pc.width($("#pc_section").width())
-			.height($("#pc_section").height())
-			//.data(globalData)
-			// .color(color)
-			//.hideAxis(["id"])
-			.render();
-			//.createAxes()
-			//.reorderable()
-			//.brushMode("1D-axes");
+		.height($("#pc_section").height())
+		//.data(globalData)
+		// .color(color)
+		//.hideAxis(["id"])
+		.render();
+		//.createAxes()
+		//.reorderable()
+		//.brushMode("1D-axes");
 	};
 
 	layout();
@@ -112,78 +112,78 @@ $(document).ready( function() {
 
 });
 
-		
-		function loadFiles(files) {
-			if (files.length > 0) {
-				var reader = new FileReader();
-				var file = files[0];
-				reader.onload = (function(file) { return function(e) {
-					var data = (reader.result.indexOf("\t") < 0 ? d3.csv : d3.tsv).parse(reader.result);
-					if (data.length > 0) {
-						globalData = data;
-						createIDs(data);
-						createColormap(data);
-						pc.clear("foreground")
-							.data(data)
-							.color(color)
-							.detectDimensions()
-							.autoscale()
-							.hideAxis(["id"])
-							.render()
-							.reorderable()
-							.createAxes();
 
-						// setupGrid(data);
-						pc.filename = file.name;
-						gui.add(pc, 'filename');
-
-						// remove previous dimensions before assigning
-						// new ones
-						globalDimensions.forEach(function(dim) {
-							gui.remove(pc, dim);
-						});
-						
-						globalDimensions = pc.dimensions();
-						
-						setupVisibility();
-
-					} else {
-						alert("no data or not in csv format!");
-					}
-				};})(file);
-				reader.readAsText(file);
-			}
-		}
-
-		setupVisibility = function() {
-
-			globalDimensions.forEach(function(dim) {
-				pc[dim] = true;
-				gui.add(pc, dim).onChange(toggleVisibility);
-			});
-			// pc["id"] = false;
-		}
-
-		var toggleVisibility = function(value) {
-			var hidden = globalDimensions.filter(function(dim) {
-				return pc[dim] === false;
-			});
-			hidden.push("id");
-			pc
-				.data(globalData)
+function loadFiles(files) {
+	if (files.length > 0) {
+		var reader = new FileReader();
+		var file = files[0];
+		reader.onload = (function(file) { return function(e) {
+			var data = (reader.result.indexOf("\t") < 0 ? d3.csv : d3.tsv).parse(reader.result);
+			if (data.length > 0) {
+				globalData = data;
+				createIDs(data);
+				createColormap(data);
+				pc.clear("foreground")
+				.data(data)
+				.color(color)
 				.detectDimensions()
-				.hideAxis(hidden)
+				.autoscale()
+				.hideAxis(["id"])
 				.render()
-				.createAxes()
 				.reorderable()
+				.createAxes();
 
+				// setupGrid(data);
+				pc.filename = file.name;
+				gui.add(pc, 'filename');
 
-		};
+				// remove previous dimensions before assigning
+				// new ones
+				globalDimensions.forEach(function(dim) {
+					gui.remove(pc, dim);
+				});
 
-		function createIDs(data) {
-			if (data.length && typeof data[0].id === "undefined") {
-				for (var i = 0; i < data.length; ++i) {
-					data[i].id = i;
-				}
+				globalDimensions = pc.dimensions();
+
+				setupVisibility();
+
+			} else {
+				alert("no data or not in csv format!");
 			}
+		};})(file);
+		reader.readAsText(file);
+	}
+}
+
+setupVisibility = function() {
+
+	globalDimensions.forEach(function(dim) {
+		pc[dim] = true;
+		gui.add(pc, dim).onChange(toggleVisibility);
+	});
+	// pc["id"] = false;
+}
+
+var toggleVisibility = function(value) {
+	var hidden = globalDimensions.filter(function(dim) {
+		return pc[dim] === false;
+	});
+	hidden.push("id");
+	pc
+	.data(globalData)
+	.detectDimensions()
+	.hideAxis(hidden)
+	.render()
+	.createAxes()
+	.reorderable()
+
+
+};
+
+function createIDs(data) {
+	if (data.length && typeof data[0].id === "undefined") {
+		for (var i = 0; i < data.length; ++i) {
+			data[i].id = i;
 		}
+	}
+}
