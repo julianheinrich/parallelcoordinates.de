@@ -98,13 +98,13 @@ $(document).ready( function() {
 	var layout = function() {
 		pc.width($("#pc_section").width())
 			.height($("#pc_section").height())
-			.data(globalData)
+			//.data(globalData)
 			// .color(color)
-			.hideAxis(["id"])
-			.render()
-			.createAxes()
-			.reorderable()
-			.brushMode("1D-axes");
+			//.hideAxis(["id"])
+			.render();
+			//.createAxes()
+			//.reorderable()
+			//.brushMode("1D-axes");
 	};
 
 	layout();
