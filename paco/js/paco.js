@@ -33,6 +33,24 @@ var createColormap = function(data, color) {
 
 $(document).ready( function() {
 
+	// http://codereview.stackexchange.com/questions/66363/toggle-item-inside-a-bootstrap-dropdown-menu
+	$('#brushing-menu a').click(function(e) {
+		if(/strums/.test(this.id)) {
+			$('#brushing-menu').addClass('strums');
+		} else {
+			$('#brushing-menu').removeClass('strums');
+		}
+		$('#brushing-text').text($(this).text());
+	});
+
+	$('#axis-menuitem').click(function(e) {
+		pc.brushMode('1D-axes');
+	});
+	
+	$('#strums-menuitem').click(function(e) {
+		pc.brushMode('2D-strums');
+	});
+	
 	// not tested
 	if (!window.File) {
 		alert('The File API is not supported by your browser. Disabled file upload.');
@@ -40,7 +58,7 @@ $(document).ready( function() {
 	}
 
 	pc = new d3.parcoords({webgl:false})("#pc_section")
-		.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+	.margin({ top: 20, left: 50, bottom: 12, right: 0 });
 	d3.csv('data/mtcars.csv', function(d) {
 		loadData(d);
 	});
@@ -80,10 +98,9 @@ $(document).ready( function() {
 
 	var layout = function() {
 		pc
-//		.width($("#pc_section").width())
-//		.height($("#pc_section").height())
+		.width($("#pc_section").width())
+		.height($("#pc_section").height())
 		.render();
-//		pc.resize();
 	};
 
 	$(window).resize(layout);
@@ -95,20 +112,21 @@ function loadData(data) {
 	createIDs(data);
 	createColormap(data);
 	pc
-		.data(data)
-		.color(color)
-		.detectDimensions()
-		.autoscale()
-		.hideAxis(["id"])
-		.render()
-		.createAxes()
-		.reorderable();
+	.data(data)
+	.color(color)
+	.detectDimensions()
+	.autoscale()
+	.hideAxis(["id"])
+	.render()
+	.createAxes()
+	.brushMode("1D-axes")
+	.reorderable();
 
 	// setupGrid(data);
-	
+
 	// remove previous dimensions before assigning
 	// new ones
-	
+
 	globalDimensions = pc.dimensions();
 
 	setupVisibility();

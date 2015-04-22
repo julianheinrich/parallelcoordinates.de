@@ -3,3 +3,19 @@
     height: 100%;
     position: relative;
 }
+
+#brushing-menu {
+	min-width: 200px;
+}
+
+#brushing-menu .dropdown-menu .glyphicon {
+	font-size: 10px;
+}
+
+/* default state */
+#brushing-menu #axis-tick { visibility: visible; }
+#brushing-menu #strums-tick { visibility: hidden; }
+
+/* 2d brushing */ 
+#brushing-menu.strums #axis-tick { visibility: hidden; }
+#brushing-menu.strums #strums-tick { visibility: visible; }
