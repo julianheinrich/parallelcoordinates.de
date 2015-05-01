@@ -44,7 +44,7 @@ $(document).ready( function() {
 	});
 
 	$('#axis-menuitem').click(function(e) {
-		pc.brushMode('1D-axes');
+		pc.brushMode('1D-axes-multi');
 	});
 	
 	$('#strums-menuitem').click(function(e) {
@@ -119,7 +119,8 @@ function loadData(data) {
 	.hideAxis(["id"])
 	.render()
 	.createAxes()
-	.brushMode("1D-axes")
+	.brushMode("1D-axes-multi")
+	.shadows()
 	.reorderable();
 
 	// setupGrid(data);
