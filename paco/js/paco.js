@@ -43,13 +43,23 @@ $(document).ready( function() {
 		$('#brushing-text').text($(this).text());
 	});
 
-	$('#axis-menuitem').click(function(e) {
+	$('#brushing-1D').click(function(e) {
 		pc.brushMode('1D-axes-multi');
 	});
 	
-	$('#strums-menuitem').click(function(e) {
+	$('#brushing-2D').click(function(e) {
 		pc.brushMode('2D-strums');
 	});
+	
+	$('#clear-brush').click(function(e) {
+		pc.brushReset();
+	});
+	
+	// buttons are still 'focused' after being pressed in bootstrap.
+	// this makes them behave as expected
+	$(".btn").mouseup(function(){
+	    $(this).blur();
+	})
 	
 	// not tested
 	if (!window.File) {
@@ -104,6 +114,22 @@ $(document).ready( function() {
 	};
 
 	$(window).resize(layout);
+	$(".pick-a-color").pickAColor({
+        showSpectrum          : false,
+        showSavedColors       : false,
+        saveColorsPerElement  : false,
+        fadeMenuToggle        : false,
+        showAdvanced          : false,
+        showBasicColors       : false,
+        showHexInput          : false,
+        allowBlank            : false
+ });
+	
+	$('[data-toggle="tooltip"]').tooltip({
+		placement: 'bottom',
+		delay: {show: 1000, hide: 0},
+		container: 'body'
+	});
 
 });
 
