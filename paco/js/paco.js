@@ -63,7 +63,7 @@ $(document).ready( function() {
 	
 	// not tested
 	if (!window.File) {
-		alert('The File API is not supported by your browser. Disabled file upload.');
+		alert('The File API is not supported by your browser. File upload disabled.');
 		fileAPI = false;
 	}
 
