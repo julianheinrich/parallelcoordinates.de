@@ -5,6 +5,9 @@
 }
 
 
-.btn:focus, .btn:active:focus, .btn.active:focus {
-    outline: 0 none;
+.swatch {
+  display: block;
+  vertical-align: middle;
+  width: 37px;
+  height: 22px;
 }

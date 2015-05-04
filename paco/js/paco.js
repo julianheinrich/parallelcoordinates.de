@@ -9,6 +9,7 @@ var gui;
 //var globalData;
 var globalDimensions;
 var colorMap = {};
+var brushColor = '#000000';
 
 var currentFilter = {
 		searchString: "",
@@ -31,8 +32,31 @@ var createColormap = function(data, color) {
 	});
 };
 
+function setBrushColor(color) {
+	brushColor = color;
+	d3.select("#brush-color")
+	  .selectAll("button")
+	  .style("background-color", color);
+}
+
+var applyBrush = function() {
+	var brushed = pc.brushed();
+	if (brushed) {
+		brushed.forEach(function(b) {
+			colorMap[b.id] = brushColor;
+		});
+		pc.color(color)
+		  .render();
+	}
+//	pc.brushReset();
+};
+
 $(document).ready( function() {
 
+	/*
+	 * Setup the UI
+	 */
+	
 	// http://codereview.stackexchange.com/questions/66363/toggle-item-inside-a-bootstrap-dropdown-menu
 	$('#brushing-menu a').click(function(e) {
 		if(/strums/.test(this.id)) {
@@ -55,18 +79,53 @@ $(document).ready( function() {
 		pc.brushReset();
 	});
 	
+	$('#brush-color-button').click(function(e) {
+		applyBrush();
+	});
+	
+//	$(".pick-a-color").pickAColor({
+//        showSpectrum          : false,
+//        showSavedColors       : false,
+//        saveColorsPerElement  : false,
+//        fadeMenuToggle        : false,
+//        showAdvanced          : false,
+//        showBasicColors       : false,
+//        showHexInput          : false,
+//        allowBlank            : false
+//	});
+	
+	$('[data-toggle="tooltip"]').tooltip({
+		placement: 'bottom',
+		delay: {show: 1000, hide: 0},
+		container: 'body'
+	});
+	
 	// buttons are still 'focused' after being pressed in bootstrap.
 	// this makes them behave as expected
 	$(".btn").mouseup(function(){
 	    $(this).blur();
 	})
 	
+	d3.select("#brush-color-menu")
+	  .selectAll("li")
+	    .data(colorbrewer['Set2'][8])
+	  .enter().append("li").append("a")
+	    .attr("href", "#")
+	    .style("background-color", function(d) { return d; })
+	    .on("click", function(d) {
+	    	setBrushColor(d);
+	    })
+	  .append("span")
+	    .attr("class", "swatch");
+	
+	setBrushColor(colorbrewer['Set2'][8][1]);
+	
 	// not tested
 	if (!window.File) {
 		alert('The File API is not supported by your browser. File upload disabled.');
 		fileAPI = false;
 	}
-
+	
 	pc = new d3.parcoords({webgl:false})("#pc_section")
 	.margin({ top: 20, left: 50, bottom: 12, right: 0 });
 	d3.csv('data/mtcars.csv', function(d) {
@@ -114,22 +173,7 @@ $(document).ready( function() {
 	};
 
 	$(window).resize(layout);
-	$(".pick-a-color").pickAColor({
-        showSpectrum          : false,
-        showSavedColors       : false,
-        saveColorsPerElement  : false,
-        fadeMenuToggle        : false,
-        showAdvanced          : false,
-        showBasicColors       : false,
-        showHexInput          : false,
-        allowBlank            : false
- });
 	
-	$('[data-toggle="tooltip"]').tooltip({
-		placement: 'bottom',
-		delay: {show: 1000, hide: 0},
-		container: 'body'
-	});
 
 });
 
