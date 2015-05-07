@@ -51,6 +51,10 @@ var applyBrush = function() {
 //	pc.brushReset();
 };
 
+function performPCA() {
+	$('#pcaDialog').modal();
+}
+
 $(document).ready( function() {
 
 	/*
@@ -79,12 +83,13 @@ $(document).ready( function() {
 		pc.brushReset();
 	});
 
+	$('#perform-pca').click(function(e) {
+		performPCA();
+	});
+
 	$('#brush-color-button').click(function(e) {
 		applyBrush();
 	});
-<<<<<<< HEAD
-
-=======
 
 //	$(".pick-a-color").pickAColor({
 //        showSpectrum          : false,
