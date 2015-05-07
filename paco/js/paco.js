@@ -52,6 +52,45 @@ var applyBrush = function() {
 };
 
 function performPCA() {
+	var data = pc.data(),
+		schema = data.schema,
+		select;
+
+	function updateNumberOfComponentsSelect(variables) {
+		// PCA can return a maximum of N components, where N is the minimum of the
+		// number of variables used for pca and the number of rows. (I.e. if you have
+		// 6 variables but only 2 rows, you will get only 2 principal components).
+		maxNumberOfComponents = Math.min(variables.length, data.length);
+
+		var select = $('#pca-number-of-components');
+		select.empty();
+		for (var i = 1; i <= maxNumberOfComponents; i++) {
+			select.append($("<option></option>")
+				.attr("value", i).text(i));
+		}
+	}
+
+	select = $('#pca-variables');
+	select.empty();
+	select.change(function() {
+		var variables = [];
+		$('#pca-variables option:selected').each(function() {
+      variables.push($(this).text());
+    });
+		updateNumberOfComponentsSelect(variables);
+	});
+
+	var variables = [];
+	Object.getOwnPropertyNames(schema).forEach(function(variable) {
+		if (schema[variable] === "numeric") {
+			variables.push(variable);
+			select.append($("<option></option>")
+				.attr("value", variable).text(variable));
+		}
+	});
+	$('#pca-variables option').prop('selected', 'selected');
+	updateNumberOfComponentsSelect(variables);
+
 	$('#pcaDialog').modal();
 }
 
