@@ -56,7 +56,7 @@ $(document).ready( function() {
 	/*
 	 * Setup the UI
 	 */
-	
+
 	// http://codereview.stackexchange.com/questions/66363/toggle-item-inside-a-bootstrap-dropdown-menu
 	$('#brushing-menu a').click(function(e) {
 		if(/strums/.test(this.id)) {
@@ -70,31 +70,45 @@ $(document).ready( function() {
 	$('#brushing-1D').click(function(e) {
 		pc.brushMode('1D-axes-multi');
 	});
-	
+
 	$('#brushing-2D').click(function(e) {
 		pc.brushMode('2D-strums');
 	});
-	
+
 	$('#clear-brush').click(function(e) {
 		pc.brushReset();
 	});
-	
+
 	$('#brush-color-button').click(function(e) {
 		applyBrush();
 	});
-	
+<<<<<<< HEAD
+
+=======
+
+//	$(".pick-a-color").pickAColor({
+//        showSpectrum          : false,
+//        showSavedColors       : false,
+//        saveColorsPerElement  : false,
+//        fadeMenuToggle        : false,
+//        showAdvanced          : false,
+//        showBasicColors       : false,
+//        showHexInput          : false,
+//        allowBlank            : false
+//	});
+
 	$('[data-toggle="tooltip"]').tooltip({
 		placement: 'bottom',
 		delay: {show: 1000, hide: 0},
 		container: 'body'
 	});
-	
+
 	// buttons are still 'focused' after being pressed in bootstrap.
 	// this makes them behave as expected
 	$(".btn").mouseup(function(){
 	    $(this).blur();
 	})
-	
+
 	d3.select("#brush-color-menu")
 	  .selectAll("li")
 	    .data(colorbrewer['Set2'][8])
@@ -106,7 +120,7 @@ $(document).ready( function() {
 	    })
 	  .append("span")
 	    .attr("class", "swatch");
-	
+
 	setBrushColor(colorbrewer['Set2'][8][1]);
 
 	/*
@@ -140,19 +154,20 @@ $(document).ready( function() {
 				varianceSlider.slider('setValue', 2);
 				pc.variance(2/1000);
 			}
-			
+
 		}
 		pc.render();
 	});
-	
+
 	// not tested
 	if (!window.File) {
 		alert('The File API is not supported by your browser. File upload disabled.');
 		fileAPI = false;
 	}
-	
+
 	pc = new d3.parcoords()("#pc_section", "webgl")
 		.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+
 	d3.csv('data/mtcars.csv', function(d) {
 		loadData(d);
 	});
@@ -198,7 +213,7 @@ $(document).ready( function() {
 	};
 
 	$(window).resize(layout);
-	
+
 
 });
 
