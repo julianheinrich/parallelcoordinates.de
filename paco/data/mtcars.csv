@@ -1,4 +1,5 @@
 Name,Economy,Cylinders,Displacement,Horsepower,Weight,Acceleration
+factor,numeric,numeric,numeric,numeric,numeric,numeric
 Mazda RX4,21,6,160,110,2.62,16.46
 Mazda RX4 Wag,21,6,160,110,2.875,17.02
 Datsun 710,22.8,4,108,93,2.32,18.61

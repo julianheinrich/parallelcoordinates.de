@@ -202,8 +202,48 @@ $(document).ready( function() {
 
 });
 
+function createSchema(data) {
+	// To get some basic R functionality working through OpenCPU, we'll need to
+	// know what kind of data types we're dealing with and transform the data
+	// accordingly.
+	data.schema = data.shift();
+	Object.getOwnPropertyNames(data.schema).forEach(function(varName) {
+		var type = data.schema[varName].toLowerCase();
+		switch (type) {
+			case "factor":
+			case "numeric":
+				break;
+			default:
+				throw varName + " has invalid type: " + type + " (expected: factor or numeric)";
+		}
+	});
+}
+
+function convertNumeric(data) {
+	// d3.csv loads all fields as strings, so we need some meta data (the schema)
+	// and manual processing afterwards to make sure that numeric vars are actually
+	// stored as numerics.
+	var schema = data.schema,
+		varNames = Object.getOwnPropertyNames(data.schema);
+
+	data.forEach(function(datum) {
+		varNames.forEach(function(varName) {
+			var type = data.schema[varName].toLowerCase();
+			switch (type) {
+				case "factor":
+					break;
+				case "numeric":
+					datum[varName] = +datum[varName];
+					break;
+			}
+		});
+	});
+}
+
 function loadData(data) {
 //	globalData = data;
+	createSchema(data);
+	convertNumeric(data);
 	createIDs(data);
 	createColormap(data);
 	pc
