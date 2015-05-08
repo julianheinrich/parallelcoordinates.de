@@ -52,6 +52,34 @@ var applyBrush = function() {
 };
 
 function performPCA() {
+	$('#pcaDialog').modal('hide');
+	$('#configure-pca').attr('disabled', 'disabled');
+
+	// Extract variables on which we're going to perform pca.
+	var numberOfPrincipalComponents =  $('#pca-number-of-components').val();
+	var variables = [];
+	var pcaData = [];
+	$('#pca-variables option:selected').each(function() {
+		variables.push($(this).text());
+	});
+	// Extract variable on which pca is to be performed.
+	pc.data().forEach(function(datum) {
+		var pcaDatum = {};
+		variables.forEach(function(variable) {
+			pcaDatum[variable] = datum[variable];
+		});
+		pcaData.push(pcaDatum);
+	});
+
+	// TODO:
+	// * Call pca implementation through OpenCPU
+	// * Remove old principal components from parcoords if required
+	// * Add new principal components to parcoords
+
+	$('#configure-pca').attr('disabled', null);
+}
+
+function configurePCA() {
 	var data = pc.data(),
 		schema = data.schema,
 		select;
@@ -88,9 +116,10 @@ function performPCA() {
 				.attr("value", variable).text(variable));
 		}
 	});
+	$('#pca-variables').prop('size', Math.min(variables.length, 8))
 	$('#pca-variables option').prop('selected', 'selected');
-	updateNumberOfComponentsSelect(variables);
 
+	updateNumberOfComponentsSelect(variables);
 	$('#pcaDialog').modal();
 }
 
@@ -122,9 +151,10 @@ $(document).ready( function() {
 		pc.brushReset();
 	});
 
-	$('#perform-pca').click(function(e) {
-		performPCA();
+	$('#configure-pca').click(function(e) {
+		configurePCA();
 	});
+	$('#perform-pca').on('click', performPCA);
 
 	$('#brush-color-button').click(function(e) {
 		applyBrush();
