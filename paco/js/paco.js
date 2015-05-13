@@ -51,6 +51,45 @@ var applyBrush = function() {
 //	pc.brushReset();
 };
 
+ocpu.seturl("//localhost/ocpu/user/bertjan/library/pacode/R");
+
+function processPCAResults(results) {
+	var data = pc.data(),
+		fields = Object.getOwnPropertyNames(data.schema),
+		newFields = Object.getOwnPropertyNames(results[0]),
+		dims = pc.dimensions();
+
+	fields = fields.filter(function (field) {
+		return field.lastIndexOf("paco.PC", 0) === 0;
+	});
+
+	// Only return original data dimensions
+	dims = dims.filter(function (dim) {
+		return fields.indexOf(dim) === -1;
+	});
+
+	data.forEach(function (datum, i) {
+		fields.forEach(function(field) {
+			delete datum[field];
+		});
+
+		var currentPcs = results[i];
+		newFields.forEach(function (field) {
+			datum[field] = currentPcs[field];
+		});
+	});
+	dims = dims.concat(newFields);
+	pc
+		.detectDimensions()
+		.autoscale()
+		.hideAxis(["id"])
+		.render()
+		.createAxes()
+		.reorderable()
+		.brushMode("None")
+		.brushMode("1D-axes-multi");
+}
+
 function performPCA() {
 	$('#pcaDialog').modal('hide');
 	$('#configure-pca').attr('disabled', 'disabled');
@@ -75,8 +114,16 @@ function performPCA() {
 	// * Call pca implementation through OpenCPU
 	// * Remove old principal components from parcoords if required
 	// * Add new principal components to parcoords
+	var req = ocpu.call("pca", {X: pcaData, pcs: numberOfPrincipalComponents}, function(session){
+		//retrieve session console (async)
+		session.getObject(processPCAResults);
 
-	$('#configure-pca').attr('disabled', null);
+		//enable the pca button
+		$('#configure-pca').removeAttr('disabled');
+	}).fail(function(){
+		alert("Error: " + req.responseText);
+		$('#configure-pca').removeAttr('disabled');
+	});
 }
 
 function configurePCA() {
