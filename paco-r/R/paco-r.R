@@ -4,3 +4,8 @@ pca <- function(X, pcs) {
   colnames(df) <- paste("paco.PC", 1:pcs, sep="")
   df
 }
+
+pacode.kmeans <- function(X, k) {
+  X <- scale(X)
+  as.vector(kmeans(mtcars, 5)$cluster)
+}
