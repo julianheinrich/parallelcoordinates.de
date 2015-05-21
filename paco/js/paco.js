@@ -198,9 +198,7 @@ $(document).ready( function() {
 		pc.brushReset();
 	});
 
-	$('#configure-pca').click(function(e) {
-		configurePCA();
-	});
+	$('#configure-pca').click(configurePCA);
 	$('#perform-pca').on('click', performPCA);
 
 	$('#brush-color-button').click(function(e) {
