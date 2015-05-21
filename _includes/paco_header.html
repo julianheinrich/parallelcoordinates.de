@@ -95,6 +95,13 @@ body {
 									id="configure-pca">Perform PCA
 								</a>
 							</div>
+							<div class="btn-group" role="group">
+								<a href="#" type="button" class="btn btn-default navbar-btn"
+									data-original-title="Perform Clustering"
+									data-toggle="modal" data-target="clusterDialog"
+									id="configure-clustering">Perform Clustering
+								</a>
+							</div>
 						</div>
 					</li>
 				</ul>
@@ -140,6 +147,41 @@ body {
 					</div>
 				</div>
 			</div>
+
+			<!-- Modal dialog for configuring clustering -->
+			<div class="modal fade" id="clusterDialog" tabindex="-1" role="dialog" aria-labelledby="clusterModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							<h4 class="modal-title" id="clusterModalLabel">K-Means clustering</h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label for="cluster-count" class="col-sm-4 control-label">Number of clusters</label>
+									<div class="col-sm-7">
+										<input type=range min="2" max="10" value="5" id="cluster-count" class="form-control"></input>
+									</div>
+									<label id="cluster-count-label" class="col-sm-1 control-label">5</label>
+								</div>
+								<div class="form-group">
+									<label for="cluster-variables" class="col-sm-4 control-label">Variables</label>
+									<div class="col-sm-8">
+										<select id="cluster-variables" multiple class="form-control">
+										</select>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-primary" id="perform-pca">Perform clustering</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<!--/.nav-collapse -->
 		</div>
 	</nav>
