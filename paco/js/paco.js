@@ -126,6 +126,17 @@ function performPCA() {
 	});
 }
 
+function getNumericVariables() {
+	var variables = [],
+		schema = pc.data().schema;
+	Object.getOwnPropertyNames(schema).forEach(function(variable) {
+		if (schema[variable] === "numeric") {
+			variables.push(variable);
+		}
+	});
+	return variables;
+}
+
 function configurePCA() {
 	var data = pc.data(),
 		schema = data.schema,
@@ -170,6 +181,25 @@ function configurePCA() {
 	$('#pcaDialog').modal();
 }
 
+function performClustering() {
+
+}
+
+function configureClustering() {
+	$('#cluster-count').attr('min', 2);
+	$('#cluster-count').attr('max', Math.floor(Math.sqrt(pc.data().length)));
+
+	select = $('#cluster-variables');
+	select.empty();
+	getNumericVariables().forEach(function(variable) {
+		select
+			.append($("<option></option>")
+			.attr("value", variable).text(variable));
+	});
+
+	$('#clusterDialog').modal();
+}
+
 $(document).ready( function() {
 
 	/*
@@ -200,6 +230,12 @@ $(document).ready( function() {
 
 	$('#configure-pca').click(configurePCA);
 	$('#perform-pca').on('click', performPCA);
+
+	$('#configure-clustering').click(configureClustering);
+	$('#perform-clustering').on('click', performClustering);
+	$('#cluster-count').on('change', function() {
+		$('#cluster-count-label').html($(this).val());
+	});
 
 	$('#brush-color-button').click(function(e) {
 		applyBrush();
