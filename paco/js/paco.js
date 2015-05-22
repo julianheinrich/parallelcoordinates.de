@@ -181,8 +181,55 @@ function configurePCA() {
 	$('#pcaDialog').modal();
 }
 
-function performClustering() {
+function processClusteringResults(clustering) {
+	var data = pc.data();
 
+	clustering.forEach(function(d, i) {
+		data[i]["kmeans"] = d;
+	})
+
+	pc
+		.detectDimensions()
+		.autoscale()
+		.hideAxis(["id"])
+		.render()
+		.createAxes()
+		.reorderable()
+		.brushMode("None")
+		.brushMode("1D-axes-multi");
+}
+
+function performClustering() {
+	$('#clusterDialog').modal('hide');
+	$('#configure-clustering').attr('disabled', 'disabled');
+
+	// Extract variables on which we're going to perform pca.
+	var numberOfClusters =  $('#cluster-count').val();
+	var variables = [];
+	$('#pca-variables option:selected').each(function() {
+		variables.push($(this).text());
+	});
+
+	// Extract variable on which pca is to be performed.
+	var clusterData = [];
+	pc.data().forEach(function(datum) {
+		var clusterDatum = {};
+		variables.forEach(function(variable) {
+			clusterDatum[variable] = datum[variable];
+		});
+		clusterData.push(clusterDatum);
+	});
+
+	var req = ocpu.call("pacode.kmeans", {X: clusterData, k: numberOfClusters}, function(session){
+		//retrieve session console (async)
+		session.getObject(processClusteringResults);
+
+		//enable the pca button
+		$('#configure-clustering').removeAttr('disabled');
+	}).fail(function(){
+		alert("Error: " + req.responseText);
+		$('#configure-clustering').removeAttr('disabled');
+	});
 }
 
 function configureClustering() {
