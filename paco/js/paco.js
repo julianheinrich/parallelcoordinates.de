@@ -51,7 +51,13 @@ var applyBrush = function() {
 //	pc.brushReset();
 };
 
-ocpu.seturl("//localhost/ocpu/user/bertjan/library/pacode/R");
+// Correct url below for local testing
+//ocpu.seturl("//localhost/ocpu/user/bertjan/library/pacode/R");
+
+// This url should be used for the live demo. Note, make sure to push changes to
+// to https://github.com/bbroeksema/pacode, before pushing depending features to
+// https://github.com/julianheinrich/parallelcoordinates.de
+ocpu.seturl("//public.opencpu.org/ocpu/github/bbroeksema/pacode/R");
 
 function processPCAResults(results) {
 	var data = pc.data(),
@@ -114,7 +120,7 @@ function performPCA() {
 	// * Call pca implementation through OpenCPU
 	// * Remove old principal components from parcoords if required
 	// * Add new principal components to parcoords
-	var req = ocpu.call("pca", {X: pcaData, pcs: numberOfPrincipalComponents}, function(session){
+	var req = ocpu.call("pacode.pca", {X: pcaData, pcs: numberOfPrincipalComponents}, function(session){
 		//retrieve session console (async)
 		session.getObject(processPCAResults);
 
