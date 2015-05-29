@@ -446,15 +446,32 @@ Outside the visualization community however, it seems not so widely used, despit
 In this exposition we present a web-based implementation to make it accessible to and usable for a wide audience.
 This implementation also demonstrates the core functionality of parallel coordinates.
 It supports large data in terms of data points by providing progressive rendering and density based rendering features.
-Furthermore it shows how parallel coordinates can be extended by advanced analytics by connecting it to the R analytical environment through OpenCPU.
+Furthermore it shows how parallel coordinates can be extended by advanced analytics by connecting it to the R statistical computing environment through OpenCPU\cite{OpenCPU}.
 This is a work in progress, which can be accessed online at http://www.parallelcoordinates.de and serves as demonstration for potential implementation of more targeted applications.
 
 \section{Analytics}
 
-
+Visual analytics has been defined as the ``combination of automated analytisis techniques with interactive visualizations for an effective understanding, reasoning and desicion making on the basis of very large and complex data sets'' \cite{Keim}. % book: solving problems with visual analytics
+To this end we demonstrate how to combine a parallel coordinates visualization with R.
+R is both a language and an environment for statistical computing\cite{R-Project}. %http://www.r-project.org/about.html
+It is widely used in a variety of domains, among which bioinformatics is a prominent one.
+Combining parallel coordinates, therefore brings a wide range of analytical approaches.
 
 \subsection{OpenCPU}
-Provides communication with R
+
+OpenCPU is a system which makes R packages available through an HTTP API.
+For example, in our demo application we provde a clustering function, which is by posting to:
+http://local/ocpu/library/pacode/R/pacode.kmeans.
+Arguments to a function are transmitted in the post body in json format.
+As a reponse on calling such a function, OpenCPU sends back a session object.
+This object can either be used to get the actual function output in a variety of formats, amongst which json.
+Or, it can be used to chain functions, by passing a session key as arguments to another function call.
+
+OpenCPU can be run from within R, however a more scalable approach is running the dedicated OpenCPU server.
+
+The additional light-weight OpenCPU JavaScript library makes connecting R and a web front end straight forward.
+
+
 Provides caching
 Can be made scalable using SparkR (distributed R)
 
