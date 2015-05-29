@@ -1,9 +1,0 @@
-Package: pacode
-Type: Package
-Title: Basic analytical functionality for parallelcoordinates.de
-Version: 1.0
-Date: 2015-05-13
-Author: Bertjan Broeksema
-Maintainer: Bertjan Broeksema <bertjan.broeksema@list.lu>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
