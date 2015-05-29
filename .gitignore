@@ -2,3 +2,8 @@
 .Rproj.user
 _site
 Gemfile.lock
+
+paper/BDVA/bare_conf.aux
+paper/BDVA/bare_conf.log
+paper/BDVA/*.backup
+paper/BDVA/*.kile*
