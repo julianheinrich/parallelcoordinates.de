@@ -83,17 +83,6 @@ $(document).ready( function() {
 		applyBrush();
 	});
 	
-//	$(".pick-a-color").pickAColor({
-//        showSpectrum          : false,
-//        showSavedColors       : false,
-//        saveColorsPerElement  : false,
-//        fadeMenuToggle        : false,
-//        showAdvanced          : false,
-//        showBasicColors       : false,
-//        showHexInput          : false,
-//        allowBlank            : false
-//	});
-	
 	$('[data-toggle="tooltip"]').tooltip({
 		placement: 'bottom',
 		delay: {show: 1000, hide: 0},
@@ -119,6 +108,42 @@ $(document).ready( function() {
 	    .attr("class", "swatch");
 	
 	setBrushColor(colorbrewer['Set2'][8][1]);
+
+	/*
+		DENSITY UI
+	*/
+
+	// var alphaSlider = $("#alpha-slider").slider({
+	// 	formatter: function(value) {
+	// 		return 'Current value: ' + value;
+	// 	}
+	// }).on('slide', function(slider) {
+	// 	pc.alpha(slider.value/100.0).render();
+	// });
+
+	var varianceSlider = $("#variance-slider").slider({
+		formatter: function(value) {
+			return 'Current value: ' + value;
+		}
+	}).on('slide', function(slider) {
+		pc.variance(slider.value/1000.0).render();
+	});
+
+	$('#density-button').click(function(e) {
+		if (pc.normalize()) {
+			pc.composite("source-over");
+			pc.normalize(false);
+		} else {
+			pc.composite("lighter");
+			pc.normalize(true);
+			if (varianceSlider.slider('getValue') <= 1) {
+				varianceSlider.slider('setValue', 2);
+				pc.variance(2/1000);
+			}
+			
+		}
+		pc.render();
+	});
 	
 	// not tested
 	if (!window.File) {
@@ -182,16 +207,17 @@ function loadData(data) {
 	createIDs(data);
 	createColormap(data);
 	pc
-	.data(data)
-	.color(color)
-	.detectDimensions()
-	.autoscale()
-	.hideAxis(["id"])
-	.render()
-	.createAxes()
-	.brushMode("1D-axes-multi")
-	.shadows()
-	.reorderable();
+		.data(data)
+		.color(color)
+		.detectDimensions()
+		.autoscale()
+		.hideAxis(["id"])
+		.alpha(1.0)
+		.render()
+		.createAxes()
+		.brushMode("1D-axes-multi")
+		//.shadows()
+		.reorderable();
 
 	// setupGrid(data);
 

@@ -1593,6 +1593,10 @@ function rotateLabels() {
   d3.event.preventDefault();
 }
 
+function dimensionLabels(d) {
+  return d in __.dimensionTitles ? __.dimensionTitles[d] : d;  // dimension display names
+}
+
 pc.createAxes = function() {
   if (g) pc.removeAxes();
 
@@ -1616,9 +1620,7 @@ pc.createAxes = function() {
         "x": 0,
         "class": "label"
       })
-      .text(function(d) {
-        return d in __.dimensionTitles ? __.dimensionTitles[d] : d;  // dimension display names
-      })
+      .text(dimensionLabels)
       .on("dblclick", flipAxisAndUpdatePCP)
       .on("wheel", rotateLabels);
 
@@ -1651,7 +1653,7 @@ pc.updateAxes = function() {
         "x": 0,
         "class": "label"
       })
-      .text(String)
+      .text(dimensionLabels)
       .on("dblclick", flipAxisAndUpdatePCP)
       .on("wheel", rotateLabels);
 
@@ -1666,7 +1668,7 @@ pc.updateAxes = function() {
   g_data.select(".label")
     .transition()
       .duration(1100)
-      .text(String)
+      .text(dimensionLabels)
       .attr("transform", "translate(0,-5) rotate(" + __.dimensionTitleRotation + ")");
 
   // Exit
@@ -1749,6 +1751,43 @@ pc.reorderable = function() {
   flags.reorderable = true;
   return this;
 };
+
+// Reorder dimensions, such that the highest value (visually) is on the left and
+// the lowest on the right. Visual values are determined by the data values in
+// the given row.
+pc.reorder = function(rowdata) {
+  var dims = __.dimensions.slice(0);
+  __.dimensions.sort(function(a, b) {
+    return yscale[a](rowdata[a]) - yscale[b](rowdata[b]);
+  });
+
+  // NOTE: this is relatively cheap given that:
+  // number of dimensions < number of data items
+  // Thus we check equality of order to prevent rerendering when this is the case.
+  var reordered = false;
+  dims.some(function(val, index) {
+    reordered = val !== __.dimensions[index];
+    return reordered;
+  });
+
+  if (reordered) {
+    xscale.domain(__.dimensions);
+    var highlighted = __.highlighted.slice(0);
+    pc.unhighlight();
+
+    g.transition()
+      .duration(1500)
+      .attr("transform", function(d) {
+        return "translate(" + xscale(d) + ")";
+      });
+    pc.render();
+
+    // pc.highlight() does not check whether highlighted is length zero, so we do that here.
+    if (highlighted.length !== 0) {
+      pc.highlight(highlighted);
+    }
+  }
+}
 
 // pairs of adjacent dimensions
 pc.adjacent_pairs = function(arr) {
@@ -2213,34 +2252,34 @@ pc.brushMode = function(mode) {
       return strum.maxX - strum.minX;
     };
 
-    pc.on("axesreorder.strums", function() {
-      var ids = Object.getOwnPropertyNames(strums).filter(function(d) {
-        return !isNaN(d);
-      });
-
-      // Checks if the first dimension is directly left of the second dimension.
-      function consecutive(first, second) {
-        var length = __.dimensions.length;
-        return __.dimensions.some(function(d, i) {
-          return (d === first)
-            ? i + i < length && __.dimensions[i + 1] === second
-            : false;
-        });
-      }
-
-      if (ids.length > 0) { // We have some strums, which might need to be removed.
-        ids.forEach(function(d) {
-          var dims = strums[d].dims;
-          strums.active = d;
-          // If the two dimensions of the current strum are not next to each other
-          // any more, than we'll need to remove the strum. Otherwise we keep it.
-          if (!consecutive(dims.left, dims.right)) {
-            removeStrum(strums);
-          }
-        });
-        onDragEnd(strums)();
-      }
-    });
+//    pc.on("axesreorder.strums", function() {
+//      var ids = Object.getOwnPropertyNames(strums).filter(function(d) {
+//        return !isNaN(d);
+//      });
+//
+//      // Checks if the first dimension is directly left of the second dimension.
+//      function consecutive(first, second) {
+//        var length = __.dimensions.length;
+//        return __.dimensions.some(function(d, i) {
+//          return (d === first)
+//            ? i + i < length && __.dimensions[i + 1] === second
+//            : false;
+//        });
+//      }
+//
+//      if (ids.length > 0) { // We have some strums, which might need to be removed.
+//        ids.forEach(function(d) {
+//          var dims = strums[d].dims;
+//          strums.active = d;
+//          // If the two dimensions of the current strum are not next to each other
+//          // any more, than we'll need to remove the strum. Otherwise we keep it.
+//          if (!consecutive(dims.left, dims.right)) {
+//            removeStrum(strums);
+//          }
+//        });
+//        onDragEnd(strums)();
+//      }
+//    });
 
     // Add a new svg group in which we draw the strums.
     pc.selection.select("svg").append("g")

@@ -49,31 +49,44 @@ body {
 						<div class="btn-toolbar brushing-toolbar" role="toolbar">
 							<div class="btn-group" data-toggle="buttons" role="group">
 								<label class="btn btn-default navbar-btn active"
-									data-toggle="tooltip" data-original-title="1D Brushing"
+									data-toggle="tooltip" data-original-title="1D brushing"
 									id="brushing-1D"> <input type="radio" id="brushing-1D"
 									value="1D" checked="checked" />1D
 								</label> <label class="btn btn-default navbar-btn" data-toggle="tooltip"
-									data-original-title="2D Brushing" id="brushing-2D"> <input
+									data-original-title="2D brushing" id="brushing-2D"> <input
 									type="radio" id="brushing-2D" value="2D" />2D
 								</label>
 							</div>
 							<!-- Split button -->
 							<div class="btn-group" role="group" id="brush-color">
-								<button type="button" class="btn btn-default navbar-btn" id="brush-color-button">Apply</button>
+								<button type="button" class="btn btn-default navbar-btn" id="brush-color-button" data-toggle="tooltip"
+									data-original-title="apply color to current brush">Apply</button>
 								<button type="button" class="btn btn-default navbar-btn dropdown-toggle"
 									data-toggle="dropdown" aria-expanded="false" id="brush-color-caret">
 									<span class="caret"></span> <span class="sr-only">Toggle
 										Dropdown</span>
 								</button>
 								<ul class="dropdown-menu brush-color" role="menu" id="brush-color-menu">
-									
 								</ul>
 							</div>
 							<div class="btn-group" role="group">
 								<a href="#" type="button" class="btn btn-default navbar-btn"
-									data-toggle="tooltip" data-original-title="Clear Brush"
+									data-toggle="tooltip" data-original-title="clear brush"
 									id="clear-brush"> <span class="glyphicon glyphicon-remove"></span>
 								</a>
+							</div>
+							<div class="btn-group" role="group" id="brush-color">
+								<button type="button" class="btn btn-default navbar-btn" id="density-button" data-toggle="tooltip"
+									data-original-title="show line density">Density</button>
+								<button type="button" class="btn btn-default navbar-btn dropdown-toggle"
+									data-toggle="dropdown" aria-expanded="false" id="density-caret">
+									<span class="caret"></span> <span class="sr-only">Toggle
+										Dropdown</span>
+								</button>
+								<ul class="dropdown-menu density" role="menu" id="density-menu">
+									<!--<li><label>alpha:</label> <input id="alpha-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/></li> -->
+									<li><label>smoothness</label><input id="variance-slider" data-slider-id='varianceSlider' type="text" data-slider-min="1" data-slider-max="100" data-slider-step="1" data-slider-value="1"/></li>
+								</ul>
 							</div>
 						</div>
 					</li>
