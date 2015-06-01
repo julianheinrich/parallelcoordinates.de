@@ -437,9 +437,9 @@ The abstract goes here.
 \section{Introduction}
 % no \IEEEPARstart
 
-In many contexts we find the need to explore large data sets, both in terms of data points as well as in number of variables.
-A technique, well known in the visualization community, for exploring high variate data sets is Parallel Coordinates.
-Paralell coordinates visualizes many variables at the same time by drawing an axe for each variable parallel to each other.
+In many contexts we find the need to explore large and complex data sets with respect to data points as well as number of variables.
+A technique, well known in the visualization community, for exploring high variate data sets is Parallel Coordinates~\cite{inselberg_parallel_2009}.
+Parallel coordinates visualizes many variables at the same time by drawing an axis for each variable parallel to each other.
 A single data point is represented by a line which crosses each axis at the value the data point selects for the variable represented by the axis.
 Outside the visualization community however, it seems not so widely used, despite its straight forward usage.
 
@@ -491,15 +491,19 @@ E.g. PCA
 \end{figure*}
 
 \section{Rendering}
+In order to keep the system responsive even for large datasets, our system supports WebGL where available. Using hardware-accelerated graphics greatly improves rendering speed over canvas- or SVG-based rendering and allows for the use of custom shaders to implement advanced rendering techniques for parallel coordinates such as progressive rendering~\cite{heinrich_progressive_2011} and continuous parallel coordinates~\cite{heinrich_continuous_2009}.
 
 \subsection{Progressive rendering}
 
+
 \subsection{Density}
+Overplotting is one of the main challenges with parallel coordinates: The view quickly becomes cluttered as the datasets grow. One possible clutter-reduction method is to compute and render the \emph{density} of lines instead of individual lines. This approach is essentially the same as computing a kernel-density estimate for histograms or scatterplots. Figure~\ref{fig:density} shows an example of a continuous parallel-coordinates plot with Gaussian kernels and a kernel-bandwidth of $\sigma=0.001$.
+
 
 \begin{figure*}[tbh]
   \includegraphics[width=0.45\textwidth]{pollen_opaque}
   \includegraphics[width=0.45\textwidth]{pollen_density}
-  \caption{In large datasets, important patterns may be obscured by the dominating feature. In this example, the envelope of lines in the left image suggests a Gaussian distribution for the data. The kernel-density estimate shown in the right image reveals the peak density hinting at a hidden cluster of lines.}
+  \caption{\label{fig:density}In large datasets, important patterns may be obscured by the dominating feature. In this example, the envelope of lines in the left image suggests a Gaussian distribution for the data. The kernel-density estimate shown in the right image reveals the peak density hinting at a hidden cluster of lines.}
 \end{figure*}
 
 \section{Case study}
@@ -610,20 +614,20 @@ The authors would like to thank...
 % http://www.ctan.org/tex-archive/biblio/bibtex/contrib/doc/
 % The IEEEtran BibTeX style support page is at:
 % http://www.michaelshell.org/tex/ieeetran/bibtex/
-%\bibliographystyle{IEEEtran}
+\bibliographystyle{IEEEtran}
 % argument is your BibTeX string definitions and bibliography database(s)
-%\bibliography{IEEEabrv,../bib/paper}
+\bibliography{references}
 %
 % <OR> manually copy in the resultant .bbl file
 % set second argument of \begin to the number of references
 % (used to reserve space for the reference number labels box)
-\begin{thebibliography}{1}
+% \begin{thebibliography}{1}
 
-\bibitem{IEEEhowto:kopka}
-H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
-  0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
+% \bibitem{IEEEhowto:kopka}
+% H.~Kopka and P.~W. Daly, \emph{A Guide to \LaTeX}, 3rd~ed.\hskip 1em plus
+%   0.5em minus 0.4em\relax Harlow, England: Addison-Wesley, 1999.
 
-\end{thebibliography}
+% \end{thebibliography}
 
 
 
