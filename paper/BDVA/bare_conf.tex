@@ -325,7 +325,7 @@
 
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 %
-%\usepackage{url}
+\usepackage{url}
 % url.sty was written by Donald Arseneau. It provides better support for
 % handling and breaking URLs. url.sty is already installed on most LaTeX
 % systems. The latest version can be obtained at:
@@ -359,8 +359,8 @@
 % use a multiple column layout for up to three different
 % affiliations
 \author{\IEEEauthorblockN{Julian Heinrich}
-\IEEEauthorblockA{CSIRO Digital Productivity\\
-North Ryde, Australia\\
+\IEEEauthorblockA{CSIRO\\
+Sydney, Australia\\
 Email: julian.heinrich@csiro.au}
 \and
 \IEEEauthorblockN{Bertjan Broeksema}
@@ -414,7 +414,11 @@ Email: bertjan.broeksema@list.lu}
 % math in the abstract anyway.
 
 %\boldmath
-The abstract goes here.
+We present a web-based implementation of parallel coordinates suitable for big data
+visual analytics. While being easily accessible through via web-browsers, the system
+supports advanced analytics on the server via R as well as progressive and
+density-based rendering on the client with support for hardware accellerated graphics.
+A prototype implementation is available at \url{parallelcoordinates.de}.
 \end{abstract}
 
 % no keywords
@@ -475,11 +479,9 @@ The additional light-weight OpenCPU JavaScript library makes connecting R and a 
 Provides caching
 Can be made scalable using SparkR (distributed R)
 
-\subsection{Clustering}
+\subsection{Clustering \& Dimensionality Reduction}
 R Provides many clustering algorithms out of the box
 A thin wrapper is required to provide a consistent API for the front-end
-
-\subsection{Dimensionality reduction}
 
 Like clustering, many dim. red. techniques available in R.
 Widely used analytical approach to search for structure
@@ -493,29 +495,25 @@ E.g. PCA
 \section{Rendering}
 In order to keep the system responsive even for large datasets, our system supports WebGL where available. Using hardware-accelerated graphics greatly improves rendering speed over canvas- or SVG-based rendering and allows for the use of custom shaders to implement advanced rendering techniques for parallel coordinates such as progressive rendering~\cite{heinrich_progressive_2011} and continuous parallel coordinates~\cite{heinrich_continuous_2009}.
 
-\subsection{Progressive rendering}
+\subsection{Continuous Parallel Coordinates}
+Overplotting is one of the main challenges with parallel coordinates: The view quickly becomes cluttered as the datasets grow. One possible clutter-reduction method is to compute and render the \emph{density} of lines instead of individual lines. By using \emph{line-kernels}, this approach is the same as computing a kernel-density estimate for histograms or scatterplots. Figure~\ref{fig:density} shows an example of a continuous parallel-coordinates plot with Gaussian kernels.
 
+\subsection{Progressive Rendering}
+Our implementation supports progressive rendering. Here, the plot is updated after a number of lines or kernels have been processed in order to show the user an intermediate result. Hence, the image is \emph{progressively} evolving towards the final result. This is particularly useful if aggregation techniques such as continuous parallel coordinates are employed, as the dominating patterns are likely to appear early in the process. 
 
-\subsection{Density}
-Overplotting is one of the main challenges with parallel coordinates: The view quickly becomes cluttered as the datasets grow. One possible clutter-reduction method is to compute and render the \emph{density} of lines instead of individual lines. This approach is essentially the same as computing a kernel-density estimate for histograms or scatterplots. Figure~\ref{fig:density} shows an example of a continuous parallel-coordinates plot with Gaussian kernels and a kernel-bandwidth of $\sigma=0.001$.
-
-
-\begin{figure*}[tbh]
+\begin{figure}[tbh]
+\centering
   \includegraphics[width=0.45\textwidth]{pollen_opaque}
   \includegraphics[width=0.45\textwidth]{pollen_density}
-  \caption{\label{fig:density}In large datasets, important patterns may be obscured by the dominating feature. In this example, the envelope of lines in the left image suggests a Gaussian distribution for the data. The kernel-density estimate shown in the right image reveals the peak density hinting at a hidden cluster of lines.}
-\end{figure*}
-
-\section{Case study}
+  \caption{\label{fig:density}In large datasets, important patterns may be obscured by the dominating feature. In this example, the envelope of lines in the top image suggests a Gaussian distribution for the data. The kernel-density estimate shown in the bottom image reveals the peak density hinting at a hidden cluster of lines.}
+\end{figure}
 
 \section{Conclusion}
 The conclusion goes here.
 
 % use section* for acknowledgement
-\section*{Acknowledgment}
-
-
-The authors would like to thank...
+%\section*{Acknowledgment}
+%The authors would like to thank...
 
 
 % An example of a floating figure using the graphicx package.
