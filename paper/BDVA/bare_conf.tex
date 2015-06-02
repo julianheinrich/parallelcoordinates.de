@@ -325,7 +325,8 @@
 
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 %
-\usepackage{url}
+%\usepackage{url}
+\usepackage{hyperref} % Works better than url
 % url.sty was written by Donald Arseneau. It provides better support for
 % handling and breaking URLs. url.sty is already installed on most LaTeX
 % systems. The latest version can be obtained at:
@@ -342,7 +343,6 @@
 % There should be no need to do such things with IEEEtran.cls V1.6 and later.
 % (Unless specifically asked to do so by the journal or conference you plan
 % to submit to, of course. )
-
 
 % correct bad hyphenation here
 \hyphenation{op-tical net-works semi-conduc-tor}
@@ -451,46 +451,64 @@ In this exposition we present a web-based implementation to make it accessible t
 This implementation also demonstrates the core functionality of parallel coordinates.
 It supports large data in terms of data points by providing progressive rendering and density based rendering features.
 Furthermore it shows how parallel coordinates can be extended by advanced analytics by connecting it to the R statistical computing environment through OpenCPU\cite{OpenCPU}.
-This is a work in progress, which can be accessed online at http://www.parallelcoordinates.de and serves as demonstration for potential implementation of more targeted applications.
+This is a work in progress which serves as demonstration for potential implementation of more targeted applications.
+It can be accessed on-line at:
 
-\section{Analytics}
+\begin{itemize}
+ \setlength{\parskip}{0pt}
+ \setlength{\itemsep}{0pt plus 1pt}
+ \setlength{\itemindent}{-.1in}
+ \item \url{http://www.parallelcoordinates.de}
+ \item \url{https://github.com/julianheinrich/parallelcoordinates.de}
+ \item \url{https://github.com/bbroeksema/pacode}
+\end{itemize}
 
-Visual analytics has been defined as the ``combination of automated analytisis techniques with interactive visualizations for an effective understanding, reasoning and desicion making on the basis of very large and complex data sets'' \cite{Keim}. % book: solving problems with visual analytics
-To this end we demonstrate how to combine a parallel coordinates visualization with R.
-R is both a language and an environment for statistical computing\cite{R-Project}. %http://www.r-project.org/about.html
-It is widely used in a variety of domains, among which bioinformatics is a prominent one.
-Combining parallel coordinates, therefore brings a wide range of analytical approaches.
+\begin{figure*}
+  \includegraphics[width=1\textwidth]{paco-analytics-cropped}
+  \caption{}
+  \label{fig:paco-analytics}
+\end{figure*}
 
 \subsection{OpenCPU}
 
+\section{Analytics}
+
+Visual analytics has been defined as the ``combination of automated analysis techniques with interactive visualizations for an effective understanding, reasoning and decision making on the basis of very large and complex data sets'' \cite{Keim2010}. % book: solving problems with visual analytics
+To this end we demonstrate how to combine a parallel coordinates visualization with R.
+R is both a language and an environment for statistical computing\cite{R_project}. %http://www.r-project.org/about.html
+It is widely used in a variety of domains, among which bioinformatics is a prominent one.
+Combining parallel coordinates, therefore brings a wide range of analytical approaches.
+
 OpenCPU is a system which makes R packages available through an HTTP API.
-For example, in our demo application we provde a clustering function, which is by posting to:
-http://local/ocpu/library/pacode/R/pacode.kmeans.
+For example, in our demo application we provde a clustering function, which is accessed by sending an HTTP POST request to:
+\url{http//public.opencpu.org/ocpu/github/bbroeksema/pacode/R/pacode.kmeans}.
 Arguments to a function are transmitted in the post body in json format.
-As a reponse on calling such a function, OpenCPU sends back a session object.
+As a response on calling such a function, OpenCPU sends back a session object.
 This object can either be used to get the actual function output in a variety of formats, amongst which json.
 Or, it can be used to chain functions, by passing a session key as arguments to another function call.
+Most of the low-level complexity of sending requests and retrieving results is taken away by the additional light-weight OpenCPU JavaScript library.
 
 OpenCPU can be run from within R, however a more scalable approach is running the dedicated OpenCPU server.
-
-The additional light-weight OpenCPU JavaScript library makes connecting R and a web front end straight forward.
-
-
-Provides caching
-Can be made scalable using SparkR (distributed R)
+OpenCPU server, which can be installed on Linux servers provides caching.
+The caching mechanism assumes the functions in an R package to be pure functions, i.e. they have no side-effects.
+This allows for caching arguments and results, avoiding recalculation of results when the arguments to a function are the same as an earlier call.
+Further scalability when using OpenCPU can be achieved by writing the R code using the SparkR package.
+The SparkR package provides a front-end to Apache Spark, which in turn is a large-scale data processing engine allowing for distributed computing on clusters.
 
 \subsection{Clustering \& Dimensionality Reduction}
-R Provides many clustering algorithms out of the box
-A thin wrapper is required to provide a consistent API for the front-end
 
-Like clustering, many dim. red. techniques available in R.
-Widely used analytical approach to search for structure
-E.g. PCA
+A common way to find structure in complex high-variate data sets is by performing dimensionality reduction.
+Many dimensionality reduction techniques are available in the R package ecosystem.
+We demonstrate the use of dimensionality reduction techniques by providing a wrapper around principal component analysis (PCA).
+The application allows for selecting variables on which PCA is to be performed, and the number of principal components to be added to the parallel coordinates.
+Adding principal components to the parallel coordinates allows the user to link the more abstract principal components to concrete variables.
+In Fig. \ref{fig:paco-analytics}, we can see for example that the first principal component is correlated to weight, displacement and economy (negatively).
 
-\begin{figure*}[!t]
-  \includegraphics[width=1\textwidth]{paco-analytics}
-  \caption{}
-\end{figure*}
+Another common task in exploratory analysis is clustering in order to find groups of similar data items.
+Like with dimensionality reduction, the R package ecosystem provides a number of clustering techniques.
+We demonstrate the use of clustering techniques by providing a wrapper around K-means clustering.
+The application allows for selecting variables on which the clustering is to be performed and the number of clusters that have to be returned.
+In Fig. \ref{fig:paco-analytics}, we can see for example that the a clustering with 5 clusters captures quite well the structure found in the first principal component.
 
 \section{Rendering}
 In order to keep the system responsive even for large datasets, our system supports WebGL where available. Using hardware-accelerated graphics greatly improves rendering speed over canvas- or SVG-based rendering and allows for the use of custom shaders to implement advanced rendering techniques for parallel coordinates such as progressive rendering~\cite{heinrich_progressive_2011} and continuous parallel coordinates~\cite{heinrich_continuous_2009}.
