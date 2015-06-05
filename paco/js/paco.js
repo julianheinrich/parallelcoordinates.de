@@ -116,10 +116,6 @@ function performPCA() {
 		pcaData.push(pcaDatum);
 	});
 
-	// TODO:
-	// * Call pca implementation through OpenCPU
-	// * Remove old principal components from parcoords if required
-	// * Add new principal components to parcoords
 	var req = ocpu.call("pacode.pca", {X: pcaData, pcs: numberOfPrincipalComponents}, function(session){
 		//retrieve session console (async)
 		session.getObject(processPCAResults);
