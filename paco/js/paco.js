@@ -370,8 +370,16 @@ $(document).ready( function() {
 		fileAPI = false;
 	}
 
-	pc = new d3.parcoords()("#pc_section", "webgl")
-		.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+	var canvas = document.createElement("canvas");
+
+	if (canvas.getContext("webgl") === null) {
+		$("#density-group").css("display", "none");
+		pc = new d3.parcoords()("#pc_section")
+			.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+	} else {
+		pc = new d3.parcoords()("#pc_section", "webgl")
+			.margin({ top: 20, left: 50, bottom: 12, right: 0 });
+	}
 
 	d3.csv('data/mtcars.csv', function(d) {
 		loadData(d);
