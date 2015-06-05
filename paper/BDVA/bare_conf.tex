@@ -326,7 +326,7 @@
 % *** PDF, URL AND HYPERLINK PACKAGES ***
 %
 %\usepackage{url}
-\usepackage{hyperref} % Works better than url
+\usepackage[hidelinks]{hyperref} % Works better than url
 % url.sty was written by Donald Arseneau. It provides better support for
 % handling and breaking URLs. url.sty is already installed on most LaTeX
 % systems. The latest version can be obtained at:
@@ -414,10 +414,8 @@ Email: bertjan.broeksema@list.lu}
 % math in the abstract anyway.
 
 %\boldmath
-We present a web-based implementation of parallel coordinates suitable for big data
-visual analytics. While being easily accessible through via web-browsers, the system
-supports advanced analytics on the server via R as well as progressive and
-density-based rendering on the client with support for hardware accellerated graphics.
+We present a web-based implementation of parallel coordinates suitable for big data visual analytics.
+While being easily accessible through web-browsers, the system supports advanced analytics on the server using R as well as density-based rendering on the client with support for hardware accelerated graphics.
 A prototype implementation is available at \url{parallelcoordinates.de}.
 \end{abstract}
 
@@ -441,16 +439,16 @@ A prototype implementation is available at \url{parallelcoordinates.de}.
 \section{Introduction}
 % no \IEEEPARstart
 
-In many contexts we find the need to explore large and complex data sets with respect to data points as well as number of variables.
+In many contexts the need exists to explore large and complex data sets with respect to data points as well as number of variables.
 A technique, well known in the visualization community, for exploring high variate data sets is Parallel Coordinates~\cite{inselberg_parallel_2009}.
 Parallel coordinates visualizes many variables at the same time by drawing an axis for each variable parallel to each other.
 A single data point is represented by a line which crosses each axis at the value the data point selects for the variable represented by the axis.
 Outside the visualization community however, it seems not so widely used, despite its straight forward usage.
 
-In this exposition we present a web-based implementation to make it accessible to and usable for a wide audience.
+We present a web-based implementation to make it accessible to and usable for a wide audience.
 This implementation also demonstrates the core functionality of parallel coordinates.
-It supports large data in terms of data points by providing progressive rendering and density based rendering features.
-Furthermore it shows how parallel coordinates can be extended by advanced analytics by connecting it to the R statistical computing environment through OpenCPU\cite{OpenCPU}.
+It supports large data in terms of data points by providing density based rendering.
+Furthermore it shows how parallel coordinates can be complemented with advanced analytics by connecting it to the R statistical computing environment\cite{R_project} through OpenCPU\cite{OpenCPU}.
 This is a work in progress which serves as demonstration for potential implementation of more targeted applications.
 It can be accessed on-line at:
 
@@ -465,23 +463,23 @@ It can be accessed on-line at:
 
 \begin{figure*}
   \includegraphics[width=1\textwidth]{paco-analytics-cropped}
-  \caption{}
+  \caption{Parallel coordinates, showing two principal components and a k-means clustering results, both calculated in R. Following the colored patterns we see that in this particular instance the clustering captures the first principal component quite well.}
   \label{fig:paco-analytics}
+  \vspace{-1.5em}
 \end{figure*}
-
-\subsection{OpenCPU}
 
 \section{Analytics}
 
-Visual analytics has been defined as the ``combination of automated analysis techniques with interactive visualizations for an effective understanding, reasoning and decision making on the basis of very large and complex data sets'' \cite{Keim2010}. % book: solving problems with visual analytics
+Visual analytics has been defined as the ``combination of automated analysis techniques with interactive visualizations for an effective understanding, reasoning and decision making on the basis of very large and complex data sets'' \cite{Keim2010}.
 To this end we demonstrate how to combine a parallel coordinates visualization with R.
-R is both a language and an environment for statistical computing\cite{R_project}. %http://www.r-project.org/about.html
+R is both a language and an environment for statistical computing.
 It is widely used in a variety of domains, among which bioinformatics is a prominent one.
-Combining parallel coordinates, therefore brings a wide range of analytical approaches.
+Combining parallel coordinates with R, therefore gives a powerful combination to interactively analyze complex data sets.
+
+\subsection{OpenCPU}
 
 OpenCPU is a system which makes R packages available through an HTTP API.
-For example, in our demo application we provde a clustering function, which is accessed by sending an HTTP POST request to:
-\url{http//public.opencpu.org/ocpu/github/bbroeksema/pacode/R/pacode.kmeans}.
+% For example, in our demo application we provde a clustering function, which is accessed by sending an HTTP POST request to: \url{http//public.opencpu.org/ocpu/github/bbroeksema/pacode/R/pacode.kmeans}.
 Arguments to a function are transmitted in the post body in json format.
 As a response on calling such a function, OpenCPU sends back a session object.
 This object can either be used to get the actual function output in a variety of formats, amongst which json.
@@ -493,7 +491,7 @@ OpenCPU server, which can be installed on Linux servers provides caching.
 The caching mechanism assumes the functions in an R package to be pure functions, i.e. they have no side-effects.
 This allows for caching arguments and results, avoiding recalculation of results when the arguments to a function are the same as an earlier call.
 Further scalability when using OpenCPU can be achieved by writing the R code using the SparkR package.
-The SparkR package provides a front-end to Apache Spark, which in turn is a large-scale data processing engine allowing for distributed computing on clusters.
+The SparkR package provides a front-end to Apache Spark, a large-scale data processing engine allowing for distributed computing on clusters.
 
 \subsection{Clustering \& Dimensionality Reduction}
 
@@ -513,21 +511,25 @@ In Fig. \ref{fig:paco-analytics}, we can see for example that the a clustering w
 \section{Rendering}
 In order to keep the system responsive even for large datasets, our system supports WebGL where available. Using hardware-accelerated graphics greatly improves rendering speed over canvas- or SVG-based rendering and allows for the use of custom shaders to implement advanced rendering techniques for parallel coordinates such as progressive rendering~\cite{heinrich_progressive_2011} and continuous parallel coordinates~\cite{heinrich_continuous_2009}.
 
-\subsection{Continuous Parallel Coordinates}
+% \subsection{Continuous Parallel Coordinates}
 Overplotting is one of the main challenges with parallel coordinates: The view quickly becomes cluttered as the datasets grow. One possible clutter-reduction method is to compute and render the \emph{density} of lines instead of individual lines. By using \emph{line-kernels}, this approach is the same as computing a kernel-density estimate for histograms or scatterplots. Figure~\ref{fig:density} shows an example of a continuous parallel-coordinates plot with Gaussian kernels.
 
-\subsection{Progressive Rendering}
-Our implementation supports progressive rendering. Here, the plot is updated after a number of lines or kernels have been processed in order to show the user an intermediate result. Hence, the image is \emph{progressively} evolving towards the final result. This is particularly useful if aggregation techniques such as continuous parallel coordinates are employed, as the dominating patterns are likely to appear early in the process. 
+% \subsection{Progressive Rendering}
+% Our implementation supports progressive rendering. Here, the plot is updated after a number of lines or kernels have been processed in order to show the user an intermediate result. Hence, the image is \emph{progressively} evolving towards the final result. This is particularly useful if aggregation techniques such as continuous parallel coordinates are employed, as the dominating patterns are likely to appear early in the process. 
 
 \begin{figure}[tbh]
 \centering
   \includegraphics[width=0.45\textwidth]{pollen_opaque}
   \includegraphics[width=0.45\textwidth]{pollen_density}
   \caption{\label{fig:density}In large datasets, important patterns may be obscured by the dominating feature. In this example, the envelope of lines in the top image suggests a Gaussian distribution for the data. The kernel-density estimate shown in the bottom image reveals the peak density hinting at a hidden cluster of lines.}
+  \vspace{-1.5em}
 \end{figure}
 
 \section{Conclusion}
-The conclusion goes here.
+
+We have presented a web-based system which shows how to combine parallel coordinates with advanced analytical features.
+The system combines web based visualization techniques, using WebGL for optimal performance, with the R analytical framework through OpenCPU.
+The system and its source code is made publicly available to stimulate development of application domain specific applications, using this approach.
 
 % use section* for acknowledgement
 %\section*{Acknowledgment}
