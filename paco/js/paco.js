@@ -208,7 +208,8 @@ function performClustering() {
 	// Extract variables on which we're going to perform pca.
 	var numberOfClusters =  $('#cluster-count').val();
 	var variables = [];
-	$('#pca-variables option:selected').each(function() {
+
+	$('#cluster-variables option:selected').each(function() {
 		variables.push($(this).text());
 	});
 
