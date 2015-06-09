@@ -415,14 +415,11 @@ Email: bertjan.broeksema@list.lu}
 
 %\boldmath
 We present a web-based implementation of parallel coordinates suitable for big data visual analytics.
-While being easily accessible through web-browsers, the system supports advanced analytics on the server using R as well as density-based rendering on the client with support for hardware accelerated graphics.
+While being easily accessible through web-browsers, the system supports advanced analytics on the server as well as density-based rendering on the client with support for hardware accelerated graphics.
 A prototype implementation is available at \url{parallelcoordinates.de}.
 \end{abstract}
 
 % no keywords
-
-
-
 
 % For peer review papers, you can put extra information on the cover
 % page as needed:
@@ -439,27 +436,29 @@ A prototype implementation is available at \url{parallelcoordinates.de}.
 \section{Introduction}
 % no \IEEEPARstart
 
-In many contexts the need exists to explore large and complex data sets with respect to data points as well as number of variables.
-A technique, well known in the visualization community, for exploring high variate data sets is Parallel Coordinates~\cite{inselberg_parallel_2009}.
-Parallel coordinates visualizes many variables at the same time by drawing an axis for each variable parallel to each other.
-A single data point is represented by a line which crosses each axis at the value the data point selects for the variable represented by the axis.
-Outside the visualization community however, it seems not so widely used, despite its straight forward usage.
+In many contexts, analysts need to explore large and complex data sets, both with respect to data points as well as number of variables.
+Parallel coordinates~\cite{inselberg_parallel_2009} is a technique for the visualization and explorative analysis of high-dimensional data, %which is well known in the visualization community but is not widely used or e
+%A technique, well known in the visualization community, for exploring high variate data sets is Parallel Coordinates.
+which visualizes many variables at the same time by drawing an axis for each variable parallel to each other.
+A single data point is then represented by a line crossing each axis at the value of the respective variable.
+While parallel coordinates are well-known in the visualization community, many other individuals from the broader data science community are not familiar with this concept. We believe that one reason for this lies in the fact that parallel coordinates are not easily accessible to the general public.
+%Outside the visualization community however, it seems not so widely used, despite its straight forward usage.
 
-We present a web-based implementation to make it accessible to and usable for a wide audience.
-This implementation also demonstrates the core functionality of parallel coordinates.
-It supports large data in terms of data points by providing density based rendering.
-Furthermore it shows how parallel coordinates can be complemented with advanced analytics by connecting it to the R statistical computing environment\cite{R_project} through OpenCPU\cite{OpenCPU}.
-This is a work in progress which serves as demonstration for potential implementation of more targeted applications.
-It can be accessed on-line at:
+To fill this gap, we present a publicly available, web-based implementation of parallel-coordinates with support for server-side analytics and advanced rendering techniques.
+Hence, in addition to demonstrating the core functionality of parallel coordinates, our implementation
+is suitable for large data sets by providing density-based rendering~\cite{heinrich_continuous_2009}, complemented with a connection to the R statistical computing environment\cite{R_project} via OpenCPU\cite{OpenCPU}. 
+While this work is still in progress, it serves as a demonstration of a potential implementation of more targeted applications.
+We are planning to add more features such as progressive rendering~\cite{heinrich_progressive_2011} or angular brushing in the near future.
+The implementation is freely available and can be accessed on-line at \url{www.parallelcoordinates.de}.
 
-\begin{itemize}
- \setlength{\parskip}{0pt}
- \setlength{\itemsep}{0pt plus 1pt}
- \setlength{\itemindent}{-.1in}
- \item \url{http://www.parallelcoordinates.de}
- \item \url{https://github.com/julianheinrich/parallelcoordinates.de}
- \item \url{https://github.com/bbroeksema/pacode}
-\end{itemize}
+% \begin{itemize}
+%  \setlength{\parskip}{0pt}
+%  \setlength{\itemsep}{0pt plus 1pt}
+%  \setlength{\itemindent}{-.1in}
+%  \item \url{http://www.parallelcoordinates.de}
+%  \item \url{https://github.com/julianheinrich/parallelcoordinates.de}
+%  \item \url{https://github.com/bbroeksema/pacode}
+% \end{itemize}
 
 \begin{figure*}
   \includegraphics[width=1\textwidth]{paco-analytics-cropped}
@@ -472,41 +471,38 @@ It can be accessed on-line at:
 
 Visual analytics has been defined as the ``combination of automated analysis techniques with interactive visualizations for an effective understanding, reasoning and decision making on the basis of very large and complex data sets'' \cite{Keim2010}.
 To this end we demonstrate how to combine a parallel coordinates visualization with R.
-R is both a language and an environment for statistical computing.
-It is widely used in a variety of domains, among which bioinformatics is a prominent one.
-Combining parallel coordinates with R, therefore gives a powerful combination to interactively analyze complex data sets.
+R is a well-known language and environment for statistical computing that allows easy extension via a package system that allows us to harness its support for advanced analytics and combine it with interactive parallel coordinates to analyze complex data.
 
 \subsection{OpenCPU}
-
-OpenCPU is a system which makes R packages available through an HTTP API.
+The connection to R is possible via OpenCPU, a system which makes R packages available through an HTTP API.
 % For example, in our demo application we provde a clustering function, which is accessed by sending an HTTP POST request to: \url{http//public.opencpu.org/ocpu/github/bbroeksema/pacode/R/pacode.kmeans}.
-Arguments to a function are transmitted in the post body in json format.
-As a response on calling such a function, OpenCPU sends back a session object.
-This object can either be used to get the actual function output in a variety of formats, amongst which json.
-Or, it can be used to chain functions, by passing a session key as arguments to another function call.
-Most of the low-level complexity of sending requests and retrieving results is taken away by the additional light-weight OpenCPU JavaScript library.
-
-OpenCPU can be run from within R, however a more scalable approach is running the dedicated OpenCPU server.
-OpenCPU server, which can be installed on Linux servers provides caching.
-The caching mechanism assumes the functions in an R package to be pure functions, i.e. they have no side-effects.
-This allows for caching arguments and results, avoiding recalculation of results when the arguments to a function are the same as an earlier call.
-Further scalability when using OpenCPU can be achieved by writing the R code using the SparkR package.
+%Arguments to a function are transmitted in the post body in json format.
+%As a response on calling such a function, OpenCPU sends back a session object.
+%This object can either be used to get the actual function output in a variety of formats, amongst which json.
+%Or, it can be used to chain functions, by passing a session key as arguments to another function call.
+%Most of the low-level complexity of sending requests and retrieving results is taken away by the additional light-weight OpenCPU JavaScript library.
+%
+While OpenCPU can be used from within a local R session, a more scalable approach is to run a dedicated OpenCPU server, which allows for caching arguments and results of function calls and thus avoids potentially costly recalculations.
+% OpenCPU server, which can be installed on Linux servers provides caching.
+% The caching mechanism assumes the functions in an R package to be pure functions, i.e. they have no side-effects.
+% This allows for caching arguments and results, avoiding recalculation of results when the arguments to a function are the same as an earlier call.
+Further scalability when using OpenCPU can be achieved by writing R code using the SparkR package.
 The SparkR package provides a front-end to Apache Spark, a large-scale data processing engine allowing for distributed computing on clusters.
 
 \subsection{Clustering \& Dimensionality Reduction}
 
-A common way to find structure in complex high-variate data sets is by performing dimensionality reduction.
-Many dimensionality reduction techniques are available in the R package ecosystem.
+A common way to find structure in complex multivariate data sets is by performing dimensionality reduction.
+%Many dimensionality reduction techniques are available in the R package ecosystem.
 We demonstrate the use of dimensionality reduction techniques by providing a wrapper around principal component analysis (PCA).
-The application allows for selecting variables on which PCA is to be performed, and the number of principal components to be added to the parallel coordinates.
-Adding principal components to the parallel coordinates allows the user to link the more abstract principal components to concrete variables.
-In Fig. \ref{fig:paco-analytics}, we can see for example that the first principal component is correlated to weight, displacement and economy (negatively).
+The application allows for selecting variables on which the user wants to perform a PCA, resulting in a user-specified number of principal components to be added to the parallel coordinates as additional axes.
+This allows the user to link the more abstract principal components to concrete variables.
+In Figure~\ref{fig:paco-analytics}, we can see for example that the first principal component is correlated to weight, displacement and economy (negatively).
 
 Another common task in exploratory analysis is clustering in order to find groups of similar data items.
 Like with dimensionality reduction, the R package ecosystem provides a number of clustering techniques.
 We demonstrate the use of clustering techniques by providing a wrapper around K-means clustering.
 The application allows for selecting variables on which the clustering is to be performed and the number of clusters that have to be returned.
-In Fig. \ref{fig:paco-analytics}, we can see for example that the a clustering with 5 clusters captures quite well the structure found in the first principal component.
+In Figure~\ref{fig:paco-analytics}, we can see for example that a clustering with 5 clusters captures quite well the structure found in the first principal component.
 
 \section{Rendering}
 In order to keep the system responsive even for large datasets, our system supports WebGL where available. Using hardware-accelerated graphics greatly improves rendering speed over canvas- or SVG-based rendering and allows for the use of custom shaders to implement advanced rendering techniques for parallel coordinates such as progressive rendering~\cite{heinrich_progressive_2011} and continuous parallel coordinates~\cite{heinrich_continuous_2009}.
@@ -527,9 +523,9 @@ Overplotting is one of the main challenges with parallel coordinates: The view q
 
 \section{Conclusion}
 
-We have presented a web-based system which shows how to combine parallel coordinates with advanced analytical features.
+We presented a web-based system which shows how to combine parallel coordinates with advanced analytical features.
 The system combines web based visualization techniques, using WebGL for optimal performance, with the R analytical framework through OpenCPU.
-The system and its source code is made publicly available to stimulate development of application domain specific applications, using this approach.
+The system and its source code is publicly available to stimulate development of application domain specific applications, using this approach.
 
 % use section* for acknowledgement
 %\section*{Acknowledgment}
