@@ -2,10 +2,13 @@
 
 <p>
 This page is dedicated to parallel coordinates, a visualization technique for multidimensional geometry.
+It is intended to serve as an interactive guide to some of the underlying principles with occasional pointers
+to applications and further reading. As it builds up, the page is formatted as a simple blog with losely coupled
+articles about various topics around parallel coordinates:
 </p>
 
 <ul>
-  {% for post in site.posts limit: 5 %}
+  {% for post in site.posts reversed %}
     <li><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></li>
   {% endfor %}
 </ul>

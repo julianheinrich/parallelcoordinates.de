@@ -1,0 +1,16 @@
+.tutorial {
+	width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.axis, .label text {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
