@@ -16,7 +16,7 @@ Visualizing points in more than three dimensions seems to be impossible, because
 <!-- <script src="/js/parallel-points.js"/> -->
 <link rel="stylesheet" type="text/css"
   href="{{site.baseurl}}/paco/css/d3.parcoords.css">
-<script src="/paco/js/d3.parcoords.js"></script>
+<script src="{{site.baseurl}}/paco/js/d3.parcoords.js"></script>
 
 <script>
 

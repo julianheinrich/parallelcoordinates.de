@@ -29,6 +29,6 @@ The point-line duality is the most fundamental concept for parallel coordinates,
   <div id="parallel"></div>
 </div>
 
-<script type="text/javascript" src="/js/point_line_duality.js">
+<script type="text/javascript" src="{{site.baseurl}}/js/point_line_duality.js">
 
     
