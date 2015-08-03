@@ -9,7 +9,7 @@ The point-line duality is the most fundamental concept for parallel coordinates,
 2. points in parallel coordinates are represented by lines in Cartesian coordinates.
 
 <link rel="stylesheet" type="text/css"
-  href="{{site.baseurl}}/css/paco.css">
+  href="{{site.baseurl}}/css/tutorial.css">
 <style>
 
 #cartesian {
