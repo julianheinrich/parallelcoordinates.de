@@ -8,7 +8,20 @@ baseurl: "/parallelcoordinates.de"
 #url: "http://julianheinrich.github.io
 #url: "http:/"
 
-paginate: 10
+paginate: 1
+paginate_path: "tutorial/page:num/"
 
 permalink: pretty
 highlighter: pygments
+
+exclude: [
+  'scss',
+  '*.rb',
+  '*.yml', 
+  'vendor', 
+  'Gemfile', 
+  'Gemfile.lock',
+  '*.sh',
+  'README.md',
+  'LICENSE.md',
+]
