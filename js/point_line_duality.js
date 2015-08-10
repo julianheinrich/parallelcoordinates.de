@@ -74,6 +74,7 @@ sampleSVG.append("g")
 
 // append dummy rect to capture click events
 sampleSVG.append("rect")
+  .attr("class", "capture-click")
   .style('visibility', 'hidden')
   .attr("x", 0)
   .attr("y", 0)
@@ -127,6 +128,10 @@ function update() {
 
   sampleSVG.select('.y.axis')
     .call(yAxisLeft);
+
+  sampleSVG.select('rect.capture-click')
+    .attr("width", width)
+    .attr("height", height);
 
   lineSVG.attr("transform", "translate(" + (width + margin.left + margin.right) + "," + margin.top + ")");
 

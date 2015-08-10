@@ -3,6 +3,12 @@ title: Tutorial
 layout: tutorial
 ---
 
+<link rel="stylesheet" type="text/css"
+  href="{{site.baseurl}}/css/tutorial.css">
+<link rel="stylesheet" type="text/css"
+  href="{{site.baseurl}}/paco/css/d3.parcoords.css">
+<script src="{{site.baseurl}}/paco/js/d3.parcoords.js"></script>
+
 <!-- This loops through the paginated posts -->
 {% for post in site.categories.tutorial %}
   <h3 id="{{ post.title }}">{{ post.title }}</h3>
