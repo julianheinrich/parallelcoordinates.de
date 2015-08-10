@@ -1,9 +1,11 @@
 
-var svgWidth = 300;
+// dimensions for svg
+var svgWidth = 600;
 var svgHeight = 300;
 
+// dimensions for individual coordinate systems
 var margin = {top: 20, right: 20, bottom: 20, left: 20},
-    width = svgWidth - margin.left - margin.right,
+    width = svgWidth/2 - margin.left - margin.right,
     height = svgHeight - margin.top - margin.bottom;
 
 var domain = [0, 10];
@@ -14,10 +16,9 @@ var click = function() {
   if (d3.event.defaultPrevented) return;
 
   var c = d3.mouse(this);
-  var x1 = c[0] - margin.left;
-  var x2 = c[1] - margin.top;
+  var x1 = c[0];
+  var x2 = c[1];
   
-  //drawSample(xScale.invert(x1), yScale.invert(x2));
   points.push([xScale.invert(x1), xScale.invert(x2)]);
   update();
 }
@@ -50,21 +51,18 @@ var yAxisRight = d3.svg.axis()
   .scale(yScale)
   .orient("right");
 
-var sampleSVG = d3.select("#cartesian")
+// svg container
+var svg = d3.select("#container")
   .append("svg")
   .attr("width", svgWidth)
-  .attr("height", svgHeight)
-  .on("click", click)
-.append("g")
+  .attr("height", svgHeight);
+
+// cartesian coordinates
+var sampleSVG = svg.append("g")
+  .attr("class", "cartesian")
+  .style("pointer-events", "all") // capture events bubbling up
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
   
-var lineSVG = d3.select("#parallel")
-  .append("svg")
-  .attr("width", svgWidth)
-  .attr("height", svgHeight)
-.append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
 sampleSVG.append("g")
   .attr("class", "x axis")
   .attr("transform", "translate(0," + height +")")
@@ -74,14 +72,28 @@ sampleSVG.append("g")
   .attr("class", "y axis")
   .call(yAxisLeft);
 
+// append dummy rect to capture click events
+sampleSVG.append("rect")
+  .style('visibility', 'hidden')
+  .attr("x", 0)
+  .attr("y", 0)
+  .attr("width", width)
+  .attr("height", height)
+  .on("click", click);
+
+// parallel coordinates
+var lineSVG = svg.append("g")
+  .attr("class", "parallel")
+  .attr("transform", "translate(" + (width + margin.left + margin.right) + "," + margin.top + ")");
+
 lineSVG.append("g")
   .attr("class", "y axis left")
-  .attr("transform", "translate("+margin.left+",0)")
+  .attr("transform", "translate(" + margin.left + ",0)")
   .call(yAxisLeft); 
 
 lineSVG.append("g")
   .attr("class", "y axis right")
-  .attr("transform", "translate("+width+",0)")
+  .attr("transform", "translate(" + width + ",0)")
   .call(yAxisRight); 
 
 var drag = d3.behavior.drag()
@@ -97,12 +109,12 @@ function dragmove(d) {
 
 function update() {
   var aspect = svgWidth/svgHeight;
-  var targetWidth = $("#parallel").parent().width() * 0.4;
+  var targetWidth = $("#container").width();
 
   svgWidth = targetWidth
   svgHeight = targetWidth / aspect;
 
-  width = svgWidth - margin.left - margin.right,
+  width = svgWidth/2 - margin.left - margin.right,
   height = svgHeight - margin.top - margin.bottom
 
   xScale.range([0, width]);
@@ -116,8 +128,10 @@ function update() {
   sampleSVG.select('.y.axis')
     .call(yAxisLeft);
 
+  lineSVG.attr("transform", "translate(" + (width + margin.left + margin.right) + "," + margin.top + ")");
+
   lineSVG.select('.y.axis.right')
-    .attr("transform", "translate("+width+",0)");
+    .attr("transform", "translate(" + width + ",0)");
 
   lineSVG.select('.y.axis.left')
     .call(yAxisLeft);  
@@ -125,13 +139,12 @@ function update() {
   lineSVG.select('.y.axis.right')
     .call(yAxisRight);
 
-  var cartesian = d3.select("#cartesian svg")
-    .attr("width", svgWidth)
+  svg.attr("width", svgWidth)
     .attr("height", svgHeight);
 
-  var parallel = d3.select("#parallel svg")
-    .attr("width", svgWidth)
-    .attr("height", svgHeight);
+  // var parallel = d3.select("#parallel svg")
+  //   .attr("width", svgWidth)
+  //   .attr("height", svgHeight);
 
   circles = sampleSVG.selectAll(".dot")
     .data(points);

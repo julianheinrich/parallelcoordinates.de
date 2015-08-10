@@ -13,7 +13,7 @@ paginate_path: "tutorial/page:num/"
 
 permalink: pretty
 highlighter: pygments
-markdown: kramdown
+#markdown: kramdown
 
 exclude: [
   'scss',
@@ -26,3 +26,19 @@ exclude: [
   'README.md',
   'LICENSE.md',
 ]
+
+scholar:
+  style: apa
+  locale: en
+  sort_by: year
+  order: descending
+  source: ./_bibliography
+  bibliography: references.bib
+  bibliography_template: "{{ reference }}"
+  replace_strings: true
+  join_strings:    true
+  details_dir:    bibliography
+  details_layout: bibtex.html
+  details_link:   Details
+  query: "@*"
+  #repository: ./files

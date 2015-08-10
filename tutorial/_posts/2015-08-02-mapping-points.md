@@ -73,7 +73,8 @@ var mappingPoints = (function() {
 
 </script>
 This little example constitutes our very first valid Parallel-Coordinates Plot:
-On every axis, a little dot denotes the coordinate of our point $$P$$ for the respective dimension. Alfred Inselberg calls them *indexed points (with one index)* and uses a single index to describe each of these dots, so that $$p_1=3$$, $$p_2=7$$, and so on.
+On every axis, a little dot denotes the coordinate of our point $$P$$ for the respective dimension.
+Alfred Inselberg calls them *indexed points (with one index)* and uses a single index to describe each of these dots, so that $$p_1=3$$, $$p_2=7$$, and so on.
 Note how we use two spatial dimensions overall: the horizontal dimension conveys the actual coordinate, while the vertical dimension is used to spread out all five axes. If you think of these two dimensions as a Cartesian coordinate system with the y-axis going from bottom to top and the x-axis from left to right, then we can use this *embedding* coordinate system to address all indexed points with two coordinates: assuming that 'Dimension 1' is at horizontal position 0 and the inter-axis distance $$d$$ is one, then $$p_1 = (0, 3)$$, $$p_2 = (1, 7)$$, etc.
 
 
