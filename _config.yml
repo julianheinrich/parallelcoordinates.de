@@ -13,6 +13,7 @@ paginate_path: "tutorial/page:num/"
 
 permalink: pretty
 highlighter: pygments
+markdown: kramdown
 
 exclude: [
   'scss',
