@@ -2,11 +2,11 @@ name: "parallelcoordinates.de"
 description: "Visual Multidimensional Geometry"
 
 # uncomment the following line to deploy on github:
-baseurl: "/parallelcoordinates.de"
+#baseurl: "/parallelcoordinates.de"
 
 #baseurl: "http://localhost:4000"
 #url: "http://julianheinrich.github.io
-#url: "http:/"
+url: "http://"
 
 paginate: 1
 paginate_path: "tutorial/page:num/"
@@ -25,6 +25,7 @@ exclude: [
   '*.sh',
   'README.md',
   'LICENSE.md',
+  'paper'
 ]
 
 scholar:
