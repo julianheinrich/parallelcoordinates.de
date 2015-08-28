@@ -9,7 +9,7 @@ The point-line duality {% cite inselberg_plane_1985 %} is the most fundamental c
 1. points in Cartesian coordinates are mapped to lines in parallel coordinates and
 2. points in parallel coordinates are represented by lines in Cartesian coordinates.
 
-The first part of the duality is straight-forward: mapping a point from Cartesian to parallel coordinates is a matter of locating the vertical position of the point-coordinates on the respective axes in parallel coordinates. The line that connects these two points is the line (in parallel coordinates) that represents a point (in Cartesian coordinates). To see how this works, add points to the Cartesian coordinate system on the left and see their *dual lines* appear in the parallel coordinate system on the right:
+The first part of the duality is straight-forward: mapping a point from Cartesian to parallel coordinates is a matter of locating the vertical position of the point-coordinates on the respective axes in parallel coordinates. The line that connects these two points is the line (in parallel coordinates) that represents a point (in Cartesian coordinates). To see how this works, <div class="instructions">add points to the Cartesian coordinate system on the left by clicking on the Canvas and see their *dual lines* appear in the parallel coordinate system on the right</div>:
 
 <link rel="stylesheet" type="text/css"
   href="{{site.baseurl}}/css/tutorial.css">
