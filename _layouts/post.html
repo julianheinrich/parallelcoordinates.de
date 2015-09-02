@@ -1,10 +1,16 @@
 {% include header.html %}
 
+<link rel="stylesheet" type="text/css"
+  href="{{site.baseurl}}/css/blog.css">
+<link rel="stylesheet" type="text/css"
+  href="{{site.baseurl}}/paco/css/d3.parcoords.css">
+<script src="{{site.baseurl}}/paco/js/d3.parcoords.js"></script>
+
 <div class="container fill_height">
 	<div class="row">
 	  <div class="col-md-8">
 	    <h1>{{ page.title }}</h1>
-	    <!-- <p class="muted">{{ page.date | date_to_long_string }}</p> -->
+	    <p class="post-meta">{{ page.date | date_to_long_string }}</p>
 	    {{ content }}
 	  </div>
 	  <div class="col-md-4">

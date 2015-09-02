@@ -1,6 +1,6 @@
 <ol class="nav nav-stacked" id="sidebar" data-spy="affix" data-offset-top="0" data-offset-bottom="200">
   {% for post in site.posts %}
-    <li><a href="#{{ post.title }}">{{ post.title }}</a></li>
+    <li><a href="{{ post.url }}">{{ post.title }}</a></li>
   {% endfor %}
 </ol>
 

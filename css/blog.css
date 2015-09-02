@@ -4,6 +4,10 @@
     position: relative;
 }
 
+.parcoords {
+	background-color: #fdfdfd !important;
+}
+
 .axis, .text {
   font: 10px sans-serif;
 }
@@ -18,3 +22,5 @@
   stroke: #000;
   shape-rendering: crispEdges;
 }
+
+.post-meta { font-size: 14px; color: #828282; }
